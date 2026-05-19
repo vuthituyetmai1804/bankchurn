@@ -1,160 +1,142 @@
 import streamlit as st
 import pandas as pd
 import joblib
-import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-# 1. Tải mô hình và bộ chuẩn hóa (Đảm bảo file nằm cùng thư mục trên GitHub)
-try:
+# --- 1. Cấu hình trang & Tải mô hình ---
+st.set_page_config(page_title="BIDV Churn Prediction", layout="wide")
+
+@st.cache_resource
+def load_assets():
+    # Đảm bảo 2 file này đã được upload lên GitHub cùng thư mục với app.py
     model = joblib.load('bank_churn_model.pkl')
     scaler = joblib.load('scaler.pkl')
-except:
-    st.error("Không tìm thấy file mô hình hoặc scaler. Hãy kiểm tra lại thư mục lưu trữ.")
+    return model, scaler
 
-st.set_page_config(page_title="BIDV Churn Prediction", layout="wide")
-st.title("🏦 Hệ thống Dự báo Nguy cơ Rời bỏ Khách hàng - BIDV")
-st.markdown("---")
-with st.form("churn_form"):
+try:
+    model, scaler = load_assets()
+except Exception as e:
+    st.error(f"Lỗi tải mô hình: {e}. Vui lòng kiểm tra file .pkl trên GitHub.")
 
-    st.subheader("📋 Thông tin khách hàng")
+# --- 2. Giao diện tiêu đề ---
+st.title("🏦 BIDV - Hệ thống Dự báo Nguy cơ Rời bỏ Khách hàng")
+st.markdown("Nhập thông tin khách hàng để AI phân tích xác suất rời bỏ (Churn) và đưa ra giải pháp chăm sóc chủ động.")
 
-    col1, col2 = st.columns(2)
-
+# --- 3. Form nhập liệu (Đủ 21 đặc trưng theo Sprint 4) ---
+with st.form("customer_input_form"):
+    st.subheader("📋 Thông tin chi tiết khách hàng")
+    
+    col1, col2, col3 = st.columns(3)
+    
     with col1:
-        age = st.slider("Tuổi", 18, 80, 35)
-
-        credit_sco = st.slider("Điểm tín dụng", 300, 850, 650)
-
-        balance = st.number_input(
-            "Số dư tài khoản",
-            min_value=0,
-            value=50000000
-        )
-
-        monthly_ir = st.number_input(
-            "Thu nhập hàng tháng",
-            min_value=0,
-            value=15000000
-        )
+        gender = st.selectbox("Giới tính", options=[0, 1], format_func=lambda x: "Nữ" if x == 0 else "Nam")
+        age = st.number_input("Tuổi", 18, 100, 35)
+        occupation = st.number_input("Nghề nghiệp (Mã hóa số)", 0, 10, 1)
+        origin_province = st.number_input("Tỉnh thành (Mã hóa số)", 0, 63, 0)
+        address = st.number_input("Quận/Huyện (Mã hóa số)", 0, 20, 0)
+        monthly_ir = st.number_input("Thu nhập hàng tháng (VND)", min_value=0, value=20000000)
+        balance = st.number_input("Số dư hiện tại (VND)", min_value=0, value=100000000)
 
     with col2:
+        credit_sco = st.slider("Điểm tín dụng (300-800)", 300, 800, 650)
+        tenure_ye = st.number_input("Số năm gắn bó", 0, 50, 5)
+        married = st.selectbox("Tình trạng hôn nhân", options=[0, 1, 2, 3],
+                              format_func=lambda x: ["Độc thân", "Kết hôn", "Ly hôn", "Góa"][x])
+        nums_card = st.number_input("Số thẻ sở hữu", 0, 10, 1)
+        nums_service = st.number_input("Số dịch vụ đang dùng", 0, 20, 3)
+        last_transaction_month = st.number_input("Giao dịch tháng cuối (VND)", 0, value=5000000)
+        active_member = st.selectbox("Hội viên hoạt động", options=[0, 1], format_func=lambda x: "Không" if x==0 else "Có")
 
-        tenure_ye = st.slider(
-            "Số năm gắn bó",
-            0, 20, 3
-        )
+    with col3:
+        customer_segment = st.selectbox("Phân khúc", options=[0, 1, 2, 3],
+                                      format_func=lambda x: ["Mass", "Emerging", "Affluent", "Priority"][x])
+        engagement_score = st.slider("Điểm tương tác app (0-100)", 0, 100, 75)
+        loyalty_level = st.selectbox("Hạng thành viên", options=[0, 1, 2, 3],
+                                   format_func=lambda x: ["Bronze", "Silver", "Gold", "Platinum"][x])
+        digital_behavior = st.selectbox("Hành vi số", options=[0, 1, 2],
+                                      format_func=lambda x: ["Offline", "Hybrid", "Mobile"][x])
+        risk_score = st.slider("Điểm rủi ro nội bộ", 0.0, 1.0, 0.2)
+        risk_segment = st.selectbox("Nhóm rủi ro", options=[0, 1, 2], format_func=lambda x: ["Thấp", "Trung bình", "Cao"][x])
+        cluster_group = st.selectbox("Nhóm hành vi (K-Means)", options=[1, 2, 3, 4])
 
-        active_member = st.selectbox(
-            "Hoạt động gần đây",
-            [0,1],
-            format_func=lambda x:
-            "Có" if x == 1 else "Không"
-        )
+    submitted = st.form_submit_button("📊 PHÂN TÍCH RỦI RO")
 
-        engagement_score = st.slider(
-            "Điểm tương tác App",
-            0, 100, 60
-        )
-
-        loyalty_level = st.selectbox(
-            "Hạng khách hàng",
-            ["Bronze","Silver","Gold","Platinum"]
-        )
-
-    submitted = st.form_submit_button("📊 DỰ ĐOÁN")
-
-# This block must be indented under the 'if submitted:' statement
+# --- 4. Xử lý dự đoán và Hiển thị kết quả ---
 if submitted:
-    # Define all 21 feature names that the model expects, IN THE EXACT ORDER OF TRAINING DATA
-    # Order from X_resampled: 'credit_sco', 'gender', 'age', 'occupation', 'balance', 'monthly_ir',
+    # Sắp xếp đúng thứ tự 21 cột như lúc huấn luyện
+    # Order from X_resampled.columns: 'credit_sco', 'gender', 'age', 'occupation', 'balance', 'monthly_ir',
     # 'address', 'origin_province', 'tenure_ye', 'married', 'nums_card', 'nums_service',
     # 'last_transaction_month', 'active_member', 'customer_segment', 'engagement_score',
     # 'loyalty_level', 'digital_behavior', 'risk_score', 'risk_segment', 'cluster_group'
-    feature_names = [
+    features = [
+        credit_sco,
+        gender,
+        age,
+        occupation,
+        balance,
+        monthly_ir,
+        address,
+        origin_province,
+        tenure_ye,
+        married,
+        nums_card,
+        nums_service,
+        last_transaction_month,
+        active_member,
+        customer_segment,
+        engagement_score,
+        loyalty_level,
+        digital_behavior,
+        risk_score,
+        risk_segment,
+        cluster_group
+    ]
+    
+    # Define feature names in the correct order for input_df (matching X_resampled columns)
+    feature_names_for_df = [
         'credit_sco', 'gender', 'age', 'occupation', 'balance', 'monthly_ir',
         'address', 'origin_province', 'tenure_ye', 'married', 'nums_card', 'nums_service',
         'last_transaction_month', 'active_member', 'customer_segment', 'engagement_score',
         'loyalty_level', 'digital_behavior', 'risk_score', 'risk_segment', 'cluster_group'
     ]
 
-    # Placeholder for missing features. Ensure these match the data types used during training.
-    # Based on the previous notebook context, some encoded values were ints.
-    gender_val = 0 # Example: Female (assuming 0 for female, 1 for male from previous LabelEncoder)
-    occupation_val = 0 # Example: First occupation category
-    origin_province_val = 0 # Example: First province category
-    address_val = 0 # Example: First address category
-    married_val = 1 # Example: Kết hôn (assuming 1 from previous LabelEncoder)
-    nums_card_val = 1 # Example: Default 1 card
-    nums_service_val = 2 # Example: Default 2 services
-    last_transaction_month_val = 0 # Example: No recent transaction
-    customer_segment_val = 0 # Example: Mass
-    digital_behavior_val = 2 # Example: Mobile
-    risk_score_val = 0.5 # Example: Default risk score
-    risk_segment_val = 0 # Example: Thấp
-    cluster_group_val = 1 # Example: First cluster
+    # Chuyển thành DataFrame và chuẩn hóa
+    input_df = pd.DataFrame([features], columns=feature_names_for_df)
+    input_scaled = scaler.transform(input_df)
 
-    # Construct input_values in the EXACT order of feature_names
-    input_values = [
-        credit_sco,         # 1. credit_sco (user input)
-        gender_val,         # 2. gender (placeholder)
-        age,                # 3. age (user input)
-        occupation_val,     # 4. occupation (placeholder)
-        balance,            # 5. balance (user input)
-        monthly_ir,         # 6. monthly_ir (user input)
-        address_val,        # 7. address (placeholder)
-        origin_province_val,# 8. origin_province (placeholder)
-        tenure_ye,          # 9. tenure_ye (user input)
-        married_val,        # 10. married (placeholder)
-        nums_card_val,      # 11. nums_card (placeholder)
-        nums_service_val,   # 12. nums_service (placeholder)
-        last_transaction_month_val, # 13. last_transaction_month (placeholder)
-        active_member,      # 14. active_member (user input)
-        customer_segment_val, # 15. customer_segment (placeholder)
-        engagement_score,   # 16. engagement_score (user input)
-        # loyalty_level will be mapped below
-        digital_behavior_val, # 18. digital_behavior (placeholder)
-        risk_score_val,     # 19. risk_score (placeholder)
-        risk_segment_val,   # 20. risk_segment (placeholder)
-        cluster_group_val   # 21. cluster_group (placeholder)
-    ]
+    # Dự đoán
+    risk_proba = model.predict_proba(input_scaled)[0][1] # Get probability of positive class (churn)
+    prediction = model.predict(input_scaled)[0]
 
-    # Map loyalty_level to numerical value (0-3) and insert into the correct position
-    loyalty_level_map = {"Bronze": 0, "Silver": 1, "Gold": 2, "Platinum": 3}
-    loyalty_level_encoded = loyalty_level_map.get(loyalty_level, 0)
-    # Insert at the correct index for 'loyalty_level' (index 16 in feature_names)
-    input_values.insert(feature_names.index('loyalty_level'), loyalty_level_encoded)
-
-    input_df = pd.DataFrame([input_values], columns=feature_names)
-
-    st.subheader("📈 Kết quả phân tích")
-
-    # Ensure scaler and model are loaded (handled in RcRNhj-4JEV_ cell)
-    if 'scaler' in globals() and 'model' in globals():
-        try:
-            input_scaled = scaler.transform(input_df)
-
-            risk_proba = model.predict_proba(input_scaled)[0][1] # Get probability of positive class
-
-            prediction = model.predict(input_scaled)[0]
-
-            st.metric(
-                "Risk Score",
-                f"{risk_proba:.2%}"
-            )
-
-            if risk_proba < 0.3:
-                st.success("✅ LOW RISK")
-            elif risk_proba < 0.7:
-                st.warning("⚠️ MEDIUM RISK")
-            else:
-                st.error("🚨 HIGH RISK")
-
-            if risk_proba > 0.7:
-                st.info("Khuyến nghị: RM cần liên hệ chăm sóc khách hàng ngay.")
-            else:
-                st.info("Khuyến nghị: Tiếp tục duy trì chương trình ưu đãi.")
-        except ValueError as e:
-            st.error(f"Lỗi: Dữ liệu đầu vào không khớp với các đặc trưng mong đợi của mô hình. Chi tiết: {e}")
-        except Exception as e:
-            st.error(f"Đã xảy ra lỗi không mong muốn trong quá trình dự đoán: {e}")
+    # --- 5. Dashboard tổng quan ---
+    st.subheader("📈 Kết quả phân tích Dashboard")
+    m1, m2, m3 = st.columns(3)
+    
+    m1.metric("Xác suất rời bỏ (Risk Score)", f"{risk_proba:.2%}")
+    
+    if prediction == 1:
+        m2.error("Trạng thái: NGUY CƠ CAO")
+        st.warning("🚨 Khuyến nghị: RM cần gọi điện chăm sóc và tặng voucher phí thường niên ngay.")
     else:
-        st.error("Lỗi: Mô hình hoặc bộ chuẩn hóa chưa được tải. Vui lòng kiểm tra lại.")
+        m2.success("Trạng thái: AN TOÀN")
+        st.info("✅ Khuyến nghị: Tiếp tục duy trì ưu đãi hiện tại.")
+    
+    m3.metric("Mức độ tương tác", f"{engagement_score}/100")
+
+    # --- 6. Giải thích lý do Churn (Feature Importance) ---
+    st.subheader("🔍 Tại sao khách hàng có nguy cơ này?")
+    # Lấy hệ số từ Logistic Regression
+    importance = model.coef_[0] # Access the first (and only) row of coefficients
+    feature_names_for_importance = [
+        "Điểm tín dụng", "Giới tính", "Tuổi", "Nghề nghiệp", "Số dư", "Thu nhập", "Địa chỉ",
+        "Tỉnh thành", "Năm gắn bó", "Hôn nhân", "Số thẻ", "Số dịch vụ", "GD tháng cuối",
+        "Hoạt động", "Phân khúc", "Điểm App", "Hạng TV", "Hành vi số", "Rủi ro NB", "Nhóm RR", "Cluster"
+    ]
+    
+    feat_importances = pd.Series(importance, index=feature_names_for_importance).sort_values(ascending=False)
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.barplot(x=feat_importances.head(5).values, y=feat_importances.head(5).index, palette="Reds_r", ax=ax)
+    plt.title("Top 5 yếu tố làm tăng nguy cơ rời bỏ")
+    st.pyplot(fig)
