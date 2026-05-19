@@ -64,19 +64,19 @@ with st.form("churn_form"):
 
 # This block must be indented under the 'if submitted:' statement
 if submitted:
-    # Define all 21 feature names that the model expects
-    # IMPORTANT: The current form only collects 8 features. You need to add more inputs
-    # or handle the missing features (e.g., with default/imputed values) in the correct order.
+    # Define all 21 feature names that the model expects, IN THE EXACT ORDER OF TRAINING DATA
+    # Order from X_resampled: 'credit_sco', 'gender', 'age', 'occupation', 'balance', 'monthly_ir',
+    # 'address', 'origin_province', 'tenure_ye', 'married', 'nums_card', 'nums_service',
+    # 'last_transaction_month', 'active_member', 'customer_segment', 'engagement_score',
+    # 'loyalty_level', 'digital_behavior', 'risk_score', 'risk_segment', 'cluster_group'
     feature_names = [
-        'gender', 'age', 'occupation', 'origin_province', 'address', 'monthly_ir',
-        'balance', 'credit_sco', 'tenure_ye', 'married', 'nums_card', 'nums_service',
+        'credit_sco', 'gender', 'age', 'occupation', 'balance', 'monthly_ir',
+        'address', 'origin_province', 'tenure_ye', 'married', 'nums_card', 'nums_service',
         'last_transaction_month', 'active_member', 'customer_segment', 'engagement_score',
         'loyalty_level', 'digital_behavior', 'risk_score', 'risk_segment', 'cluster_group'
     ]
 
-    # Placeholder for missing features. In a real app, you'd collect these or impute them.
-    # For demonstration, filling with zeros or default values. Ensure these match the data types used during training.
-    # The order MUST match 'feature_names'.
+    # Placeholder for missing features. Ensure these match the data types used during training.
     # Based on the previous notebook context, some encoded values were ints.
     gender_val = 0 # Example: Female (assuming 0 for female, 1 for male from previous LabelEncoder)
     occupation_val = 0 # Example: First occupation category
@@ -92,16 +92,36 @@ if submitted:
     risk_segment_val = 0 # Example: Thấp
     cluster_group_val = 1 # Example: First cluster
 
+    # Construct input_values in the EXACT order of feature_names
     input_values = [
-        gender_val, age, occupation_val, origin_province_val, address_val, monthly_ir,
-        balance, credit_sco, tenure_ye, married_val, nums_card_val, nums_service_val,
-        last_transaction_month_val, active_member, customer_segment_val, engagement_score,
-        loyalty_level, digital_behavior_val, risk_score_val, risk_segment_val, cluster_group_val
+        credit_sco,         # 1. credit_sco (user input)
+        gender_val,         # 2. gender (placeholder)
+        age,                # 3. age (user input)
+        occupation_val,     # 4. occupation (placeholder)
+        balance,            # 5. balance (user input)
+        monthly_ir,         # 6. monthly_ir (user input)
+        address_val,        # 7. address (placeholder)
+        origin_province_val,# 8. origin_province (placeholder)
+        tenure_ye,          # 9. tenure_ye (user input)
+        married_val,        # 10. married (placeholder)
+        nums_card_val,      # 11. nums_card (placeholder)
+        nums_service_val,   # 12. nums_service (placeholder)
+        last_transaction_month_val, # 13. last_transaction_month (placeholder)
+        active_member,      # 14. active_member (user input)
+        customer_segment_val, # 15. customer_segment (placeholder)
+        engagement_score,   # 16. engagement_score (user input)
+        # loyalty_level will be mapped below
+        digital_behavior_val, # 18. digital_behavior (placeholder)
+        risk_score_val,     # 19. risk_score (placeholder)
+        risk_segment_val,   # 20. risk_segment (placeholder)
+        cluster_group_val   # 21. cluster_group (placeholder)
     ]
-    
-    # Map loyalty_level to numerical value (0-3)
+
+    # Map loyalty_level to numerical value (0-3) and insert into the correct position
     loyalty_level_map = {"Bronze": 0, "Silver": 1, "Gold": 2, "Platinum": 3}
-    input_values[feature_names.index('loyalty_level')] = loyalty_level_map.get(loyalty_level, 0)
+    loyalty_level_encoded = loyalty_level_map.get(loyalty_level, 0)
+    # Insert at the correct index for 'loyalty_level' (index 16 in feature_names)
+    input_values.insert(feature_names.index('loyalty_level'), loyalty_level_encoded)
 
     input_df = pd.DataFrame([input_values], columns=feature_names)
 
