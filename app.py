@@ -63,7 +63,6 @@ if st.button("🔍 DỰ ĐOÁN NGAY", type="primary", use_container_width=True):
         'risk_segment': 1
     }
 
-    # Tạo DataFrame đúng thứ tự feature
     df_input = pd.DataFrame([input_dict])[feature_names]
     df_scaled = scaler.transform(df_input)
     
@@ -99,4 +98,11 @@ if st.button("🔍 DỰ ĐOÁN NGAY", type="primary", use_container_width=True):
     elif prob >= 0.40:
         st.warning("📞 Nên chăm sóc chủ động: Gọi điện tư vấn, tặng ưu đãi lãi suất, voucher.")
     else:
-       
+        st.success("✅ Duy trì mối quan hệ tốt. Có thể gửi chương trình khách hàng thân thiết.")
+
+    st.progress(float(prob))
+
+    with st.expander("Chi tiết dự đoán"):
+        col_a, col_b = st.columns(2)
+        col_a.metric("Xác suất rời bỏ", f"{prob:.1%}")
+        col_b.metric("Xác suất ở lại", f"{(1 - prob):.1%}")
