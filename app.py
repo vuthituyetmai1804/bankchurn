@@ -104,12 +104,12 @@ col1, col2 = st.columns(2)
 with col1:
     age = st.slider(
         "🎂 Tuổi",
-        18, 80, 35
+        20, 80, 35
     )
 
     credit_sco = st.slider(
         "💳 Điểm tín dụng",
-        300, 900, 650
+        495, 800, 650
     )
 
     balance = st.number_input(
@@ -132,7 +132,7 @@ with col2:
 
     nums_service = st.slider(
         "🏦 Số lượng dịch vụ sử dụng",
-        1, 10, 3
+        1, 8, 3
     )
 
     engagement_score = st.slider(
