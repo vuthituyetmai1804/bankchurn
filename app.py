@@ -24,7 +24,7 @@ def load_model():
     try:
         model = joblib.load('bidv_churnn_model.pkl')
         scaler = joblib.load('scaler_bidv_model.pkl')
-        st.sidebar.success("✅ Model loaded")
+        st.sidebar.success("✅ Model loaded successfully!")
         return model, scaler
     except Exception as e:
         st.error(f"❌ Lỗi load model: {e}")
@@ -38,7 +38,6 @@ if model is None:
 st.header("📋 Nhập Thông Tin Khách Hàng")
 
 col1, col2 = st.columns(2)
-
 with col1:
     age = st.slider("**Tuổi**", 18, 100, 45)
     credit_score = st.slider("**Điểm tín dụng**", 300, 850, 700)
@@ -61,7 +60,6 @@ with col4:
 # ==================== DỰ ĐOÁN ====================
 if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
     try:
-        # TẠO ĐẦY ĐỦ FEATURES (ẩn đi, chỉ dùng cho model)
         input_data = {
             'credit_sco': [credit_score],
             'age': [age],
@@ -76,14 +74,22 @@ if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
             'last_transaction_month': [3],
             'risk_score': [0.15],
             
-            # Các cột categorical - gán giá trị mặc định
-            'gender': ['male'],
-            'customer_segment': ['Mass'],
+            # Các cột categorical cần thiết
             'loyalty_level': [loyalty_level],
-            'digital_behavior': ['mobile'],
+            'customer_segment': ['Mass'],      # mặc định
             'cluster_group': [4],
             
-            # One-hot columns (mặc định 0)
+            # One-hot encoded columns
+            'digital_behavior_offline': [0],   # sửa ở đây
+            'origin_province_TP. Hồ Chí Minh': [1],
+            'origin_province_Hà Nội': [0],
+            'origin_province_Đồng Nai': [0],
+            'origin_province_Bình Dương': [0],
+            'origin_province_Cần Thơ': [0],
+            'origin_province_Long An': [0],
+            'origin_province_Tiền Giang': [0],
+            'origin_province_Tỉnh khác': [0],
+            
             'occupation_Giáo viên/Giảng viên': [0],
             'occupation_Hưu trí': [0],
             'occupation_Kinh doanh/Bán hàng': [0],
@@ -93,20 +99,15 @@ if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
             'occupation_Nhân viên văn phòng/Công chức': [0],
             'occupation_Nội trợ/Sinh viên': [0],
             'occupation_Quản lý/Lãnh đạo': [0],
-            'origin_province_Bình Dương': [0],
-            'origin_province_Cần Thơ': [0],
-            'origin_province_Hà Nội': [0],
-            'origin_province_Long An': [0],
-            'origin_province_TP. Hồ Chí Minh': [1],
-            'origin_province_Tiền Giang': [0],
-            'origin_province_Tỉnh khác': [0],
-            'origin_province_Đồng Nai': [0],
-            'digital_behavior_offline': [0],
+            
+            # Thêm các cột còn thiếu
+            'risk_segment': ['Low'],           # sửa lỗi này
+            'gender': ['male'],
         }
         
         input_df = pd.DataFrame(input_data)
         
-        # Scale
+        # Các cột cần scale
         cols_to_scale = ['credit_sco', 'age', 'balance', 'monthly_ir', 'nums_card', 
                         'nums_service', 'engagement_score', 'tenure_ye', 'risk_score']
         
@@ -119,18 +120,14 @@ if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
         
         # Hiển thị kết quả
         st.success("**DỰ ĐOÁN HOÀN TẤT**")
-        
         col_res1, col_res2 = st.columns([1, 2])
         with col_res1:
             st.metric("**RISK SCORE**", f"{risk_score:.1f}%")
         
         with col_res2:
-            if risk_score < 30:
-                level = "🟢 LOW RISK"
-            elif risk_score <= 70:
-                level = "🟡 MEDIUM RISK"
-            else:
-                level = "🔴 HIGH RISK"
+            if risk_score < 30: level = "🟢 LOW RISK"
+            elif risk_score <= 70: level = "🟡 MEDIUM RISK"
+            else: level = "🔴 HIGH RISK"
             st.markdown(f"### {level}")
         
         if risk_score >= 50:
@@ -142,12 +139,13 @@ if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
         if risk_score >= 70:
             st.error("🚨 **Liên hệ khẩn cấp trong 24h**")
         elif risk_score >= 40:
-            st.warning("⚠️ **Chăm sóc chủ động**: Gọi điện, tặng voucher")
+            st.warning("⚠️ **Chăm sóc chủ động**")
         else:
             st.success("✅ Duy trì mối quan hệ tốt")
 
     except Exception as e:
         st.error(f"❌ Lỗi dự đoán: {str(e)}")
+        st.info("Nếu vẫn lỗi, hãy gửi lỗi mới cho mình.")
 
 st.markdown("---")
 st.caption("BIDV Churn Prediction System • Powered by Streamlit")
