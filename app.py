@@ -23,67 +23,67 @@ st.set_page_config(
     page_icon="🏦",
     layout="wide"
 )
-
-# =========================================================
 # =========================================================
 # CUSTOM CSS - PHIÊN BẢN BO TRÒN (BORDER RADIUS)
-# =========================================================
 st.markdown("""
 <style>
-/* Nền động uốn lượn */
+/* 1. Nền động uốn lượn lấy cảm hứng từ ảnh bạn gửi */
 .stApp {
-    background: linear-gradient(-45deg, #3cb58b, #2a8a69, #ffffff, #f4f6f9);
+    background: linear-gradient(135deg, #319151 0%, #4da36c 50%, #ffffff 100%);
     background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
+    animation: gradientShift 15s ease infinite;
 }
 
-/* Bo tròn Header */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 2. Header phong cách mới */
 .header-box {
-    background: #3cb58b;
-    padding: 35px;
-    border-radius: 30px; /* Bo góc mạnh hơn */
+    background: rgba(255, 255, 255, 0.9);
+    padding: 45px;
+    border-radius: 30px;
     text-align: center;
     margin-bottom: 30px;
-    color: white;
-    box-shadow: 0px 10px 20px rgba(0,0,0,0.1);
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.1);
+    border: 2px solid #319151;
+}
+.header-title {
+    color: #319151;
+    font-size: 55px;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+.header-sub {
+    color: #555;
+    font-size: 20px;
 }
 
-/* Bo tròn Nút bấm */
+/* 3. Nút bấm bo tròn màu #319151 */
 .stButton > button {
     width: 100%;
-    height: 60px;
-    background-color: #3cb58b;
-    color: white;
-    font-size: 20px;
+    height: 65px;
+    background-color: #319151 !important;
+    color: white !important;
+    font-size: 24px;
     font-weight: bold;
-    border-radius: 30px; /* Bo tròn hoàn toàn nút */
+    border-radius: 50px !important; /* Bo tròn hoàn toàn */
     border: none;
     transition: 0.3s;
 }
+.stButton > button:hover {
+    background-color: #246d3a !important;
+    transform: scale(1.02);
+}
 
-/* Bo tròn các hộp kết quả */
-.result-box {
+/* 4. Các khung kết quả bo tròn */
+.result-box, .recommend-box {
     background-color: white;
     padding: 30px;
-    border-radius: 25px; /* Bo góc khung kết quả */
-    box-shadow: 0px 10px 20px rgba(0,0,0,0.08);
-    text-align: center;
-    border: 1px solid #e0e0e0;
-}
-
-.recommend-box {
-    padding: 25px;
-    border-radius: 25px; /* Bo góc khung khuyến nghị */
-    font-size: 18px;
-    background-color: white;
-    box-shadow: 0px 10px 20px rgba(0,0,0,0.08);
-}
-
-/* Bo tròn các chỉ số metric */
-[data-testid="stMetricValue"] {
-    background: #f8f9fa;
-    padding: 10px;
-    border-radius: 20px;
+    border-radius: 30px !important;
+    box-shadow: 0px 10px 20px rgba(0,0,0,0.1);
 }
 </style>
 """, unsafe_allow_html=True)
