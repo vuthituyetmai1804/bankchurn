@@ -25,55 +25,68 @@ st.set_page_config(
 )
 
 # =========================================================
-# CUSTOM CSS WITH ANIMATED BACKGROUND & NEW COLOR
+# =========================================================
+# CUSTOM CSS - PHIÊN BẢN BO TRÒN (BORDER RADIUS)
 # =========================================================
 st.markdown("""
 <style>
-/* Hiệu ứng nền uốn lượn */
+/* Nền động uốn lượn */
 .stApp {
     background: linear-gradient(-45deg, #3cb58b, #2a8a69, #ffffff, #f4f6f9);
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
 }
 
-@keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
+/* Bo tròn Header */
 .header-box {
     background: #3cb58b;
     padding: 35px;
-    border-radius: 20px;
+    border-radius: 30px; /* Bo góc mạnh hơn */
     text-align: center;
     margin-bottom: 30px;
     color: white;
+    box-shadow: 0px 10px 20px rgba(0,0,0,0.1);
 }
-.header-title { font-size: 42px; font-weight: bold; }
 
+/* Bo tròn Nút bấm */
 .stButton > button {
     width: 100%;
-    height: 65px;
+    height: 60px;
     background-color: #3cb58b;
     color: white;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
-    border-radius: 15px;
+    border-radius: 30px; /* Bo tròn hoàn toàn nút */
     border: none;
+    transition: 0.3s;
 }
-.stButton > button:hover {
-    background-color: #2a8a69;
-}
-.result-box, .metric-box {
+
+/* Bo tròn các hộp kết quả */
+.result-box {
     background-color: white;
+    padding: 30px;
+    border-radius: 25px; /* Bo góc khung kết quả */
+    box-shadow: 0px 10px 20px rgba(0,0,0,0.08);
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+.recommend-box {
     padding: 25px;
+    border-radius: 25px; /* Bo góc khung khuyến nghị */
+    font-size: 18px;
+    background-color: white;
+    box-shadow: 0px 10px 20px rgba(0,0,0,0.08);
+}
+
+/* Bo tròn các chỉ số metric */
+[data-testid="stMetricValue"] {
+    background: #f8f9fa;
+    padding: 10px;
     border-radius: 20px;
-    box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
 }
 </style>
 """, unsafe_allow_html=True)
-
 # =========================================================
 # HEADER
 # =========================================================
