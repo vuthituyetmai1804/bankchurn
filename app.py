@@ -27,80 +27,54 @@ st.set_page_config(
 # CUSTOM CSS - PHIÊN BẢN BO TRÒN (BORDER RADIUS)
 st.markdown("""
 <style>
-/* 1. Nền tổng thể với hiệu ứng sóng uốn lượn ở phía dưới */
+/* 1. Thiết lập màu nền tổng thể */
 .stApp {
     background-color: #f4f6f9;
-    background-image: 
-        linear-gradient(180deg, rgba(49, 145, 81, 0.1) 0%, transparent 40%),
-        linear-gradient(0deg, #319151 0%, #319151 5%, transparent 20%);
-    background-size: 100% 100%;
 }
 
-/* Hiệu ứng sóng uốn lượn cố định phía dưới */
-.stApp::before {
+/* 2. Tạo hình sóng uốn lượn bằng CSS SVG (Cố định ở dưới cùng) */
+.stApp::after {
     content: "";
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
     height: 150px;
-    background: url('https://www.transparenttextures.com/patterns/wave.png');
-    background-color: #319151;
-    opacity: 0.2;
     z-index: 0;
     pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23319151' fill-opacity='0.3' d='M0,192L48,176C96,160,192,128,288,133.3C384,139,480,181,576,197.3C672,213,768,203,864,170.7C960,139,1056,85,1152,80C1248,75,1344,117,1392,138.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: bottom;
 }
 
-/* 2. Đặt nội dung nổi lên trên sóng */
+/* 3. Đưa các thành phần giao diện lên trên sóng */
 .block-container {
+    position: relative;
+    z-index: 1;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 30px;
     padding: 3rem !important;
     box-shadow: 0px 10px 30px rgba(0,0,0,0.1);
-    z-index: 1;
-    position: relative;
 }
 
-/* 3. Header */
+/* 4. Header bo tròn & xanh */
 .header-box {
     background: #319151;
     padding: 40px;
     border-radius: 30px;
     text-align: center;
-    margin-bottom: 30px;
     color: white;
-    box-shadow: 0px 10px 20px rgba(49, 145, 81, 0.3);
-}
-.header-title {
-    font-size: 50px;
-    font-weight: 900;
-    margin-bottom: 10px;
 }
 
-/* 4. Nút bấm */
+/* 5. Nút bấm bo tròn */
 .stButton > button {
-    width: 100%;
-    height: 65px;
     background-color: #319151 !important;
     color: white !important;
-    font-size: 24px;
-    font-weight: bold;
     border-radius: 50px !important;
-    border: none;
-    transition: 0.3s;
+    height: 60px;
+    font-weight: bold;
 }
-
-/* 5. Khung kết quả */
-.result-box, .recommend-box {
-    background-color: white;
-    padding: 25px;
-    border-radius: 25px !important;
-    box-shadow: 0px 8px 20px rgba(0,0,0,0.08);
-    border: 1px solid #e1e1e1;
-}
-
-/* 6. Căn chỉnh chữ */
-h2 { color: #319151 !important; }
 </style>
 """, unsafe_allow_html=True)
 # =========================================================
