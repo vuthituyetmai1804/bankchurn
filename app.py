@@ -72,12 +72,24 @@ st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 # =========================================================
 # UI HEADER
 # =========================================================
-# Tăng tỷ lệ cột bên trái và phải (ví dụ: 1:1:1)
+# Cấu trúc 3 cột
 col_logo_l, col_logo_m, col_logo_r = st.columns([1, 1, 1]) 
 
+# Thêm CSS để căn giữa nội dung trong cột col_logo_m
+st.markdown("""
+<style>
+    [data-testid="column"]:nth-of-type(2) {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 with col_logo_m:
-    # Tăng width để logo to hơn như bạn muốn
-    st.image("https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg", width=500)
+    # Bây giờ bạn chỉnh width thoải mái, nó sẽ luôn nằm giữa cột
+    st.image("https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg", width=350)
+    
 st.markdown("""  
 <div style="text-align: center; margin-bottom: 30px;">
     <h2 style="color: #007353; font-weight: 800; margin-bottom: 5px;">🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</h2>
