@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-model = joblib.load('bidv_model.pkl')
+model = joblib.load('bidv_churn_model.pkl')
 
 st.title("Dự đoán khách hàng rời bỏ")
 
