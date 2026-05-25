@@ -142,4 +142,167 @@ with col2:
     )
 
     tenure_ye = st.slider(
-        "⏳ Số năm gắn bó
+        "⏳ Số năm gắn bó (Tenure)",
+        0, 20, 2
+    )
+
+    engagement_score = st.slider(
+        "🤝 Engagement Score",
+        0, 100, 50
+    )
+
+    active_text = st.radio(
+        "📱 Hoạt động gần đây",
+        ["Có", "Không"]
+    )
+
+# =========================================================
+# ENCODE INPUT
+# =========================================================
+active_member = 1 if active_text == "Có" else 0
+
+# =========================================================
+# PREDICT BUTTON
+# =========================================================
+predict_btn = st.button("🔍 DỰ ĐOÁN NGAY")
+
+# =========================================================
+# PREDICTION LOGIC
+# =========================================================
+if predict_btn:
+
+    # =====================================================
+    # 1. TẠO DATAFRAME CHỈ GỒM KHỚP ĐÚNG 7 CỘT CỦA SCALER
+    # =====================================================
+    scaler_features = [
+        'credit_sco', 'age', 'balance', 'monthly_ir', 
+        'nums_card', 'nums_service', 'engagement_score'
+    ]
+    
+    input_for_scaler = pd.DataFrame([{
+        'credit_sco': credit_sco,
+        'age': age,
+        'balance': balance,
+        'monthly_ir': monthly_ir,
+        'nums_card': nums_card,
+        'nums_service': nums_service,
+        'engagement_score': engagement_score
+    }])
+    
+    # Đảm bảo thứ tự cột chuẩn xác tuyệt đối cho bộ lọc scaler
+    input_for_scaler = input_for_scaler[scaler_features]
+
+    # =====================================================
+    # 2. TIẾN HÀNH SCALE DỮ LIỆU
+    # =====================================================
+    scaled_array = scaler.transform(input_for_scaler)
+    
+    # Chuyển mảng đã scale ngược lại thành DataFrame để ghép cột tiếp theo
+    input_scaled_df = pd.DataFrame(scaled_array, columns=scaler_features)
+
+    # =====================================================
+    # 3. GHÉP THÊM CÁC CỘT KHÔNG SCALE VÀO DATAFRAME CHUNG
+    # =====================================================
+    input_scaled_df['tenure_ye'] = tenure_ye
+    input_scaled_df['active_member'] = active_member
+
+    # =====================================================
+    # 4. ĐỒNG BỘ THỨ TỰ CỘT THEO KHUÔN MẪU CỦA MODEL
+    # =====================================================
+    if hasattr(model, 'feature_names_in_'):
+        # Ép dữ liệu theo ĐÚNG và CHÍNH XÁC thứ tự cột mô hình yêu cầu lúc train
+        model_features = list(model.feature_names_in_)
+        final_input = input_scaled_df[model_features]
+    else:
+        # Trường hợp phòng hờ: Nếu model không lưu tên cột, sử dụng danh sách mặc định ổn định nhất
+        default_model_features = [
+            'credit_sco', 'age', 'balance', 'monthly_ir', 
+            'nums_card', 'nums_service', 'engagement_score', 'tenure_ye', 'active_member'
+        ]
+        final_input = input_scaled_df[default_model_features]
+
+    # =====================================================
+    # 5. DỰ ĐOÁN XÁC SUẤT (PREDICT PROBABILITY)
+    # =====================================================
+    risk_score = model.predict_proba(final_input)[0][1]
+    risk_percent = round(risk_score * 100, 2)
+
+    # =====================================================
+    # RISK LEVEL
+    # =====================================================
+    if risk_percent < 30:
+        risk_level = "🟢 LOW RISK"
+        prediction_text = "✅ Khách hàng có khả năng tiếp tục sử dụng dịch vụ"
+        recommendation = "✅ Duy trì mối quan hệ tốt và tiếp tục chăm sóc định kỳ."
+        color = "green"
+    elif risk_percent <= 70:
+        risk_level = "🟡 MEDIUM RISK"
+        prediction_text = "⚠️ Khách hàng có nguy cơ rời bỏ"
+        recommendation = "📞 Nên chăm sóc chủ động: Gọi điện tư vấn, tặng ưu đãi lãi suất, voucher."
+        color = "orange"
+    else:
+        risk_level = "🔴 HIGH RISK"
+        prediction_text = "⚠️ Khách hàng có nguy cơ rời bỏ"
+        recommendation = "🚨 Cần liên hệ khẩn cấp trong 24h để giữ chân khách hàng."
+        color = "red"
+
+    # =====================================================
+    # OUTPUT GRAPHICS
+    # =====================================================
+    st.markdown("---")
+    st.markdown("# 📊 KẾT QUẢ PHÂN TÍCH")
+
+    # =====================================================
+    # METRICS
+    # =====================================================
+    colA, colB, colC = st.columns(3)
+
+    with colA:
+        st.metric(
+            label="RISK SCORE",
+            value=f"{risk_percent}%"
+        )
+
+    with colB:
+        st.metric(
+            label="RISK LEVEL",
+            value=risk_level
+        )
+
+    with colC:
+        st.metric(
+            label="PREDICTION",
+            value="CHURN" if risk_percent >= 50 else "STAY"
+        )
+
+    # =====================================================
+    # PROGRESS BAR
+    # =====================================================
+    st.progress(int(risk_percent))
+
+    # =====================================================
+    # PREDICTION RESULT BOX
+    # =====================================================
+    st.markdown(f"""
+    <div class="result-box">
+        <h2 style="color:{color}; text-align: center; margin: 0;">
+            {prediction_text}
+        </h2>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # =====================================================
+    # RECOMMENDATION BOX
+    # =====================================================
+    st.markdown(f"""
+    <div class="recommend-box"
+    style="
+        background-color:white;
+        border-left:8px solid {color};
+        margin-top:20px;
+        box-shadow: 0px 0px 15px rgba(0,0,0,0.08);
+    ">
+    <h3 style="margin-top: 0;">🎯 Khuyến nghị hành động:</h3>
+    <p style="margin-bottom: 0;">{recommendation}</p>
+    </div>
+    """, unsafe_allow_html=True)
