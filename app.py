@@ -105,6 +105,7 @@ h2 { color: #319151 !important; }
 }
 </style>
 """, unsafe_allow_html=True)
+st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 # =========================================================
 # HEADER
 # =========================================================
