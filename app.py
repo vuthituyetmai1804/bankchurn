@@ -136,7 +136,7 @@ with col2:
     )
 
     engagement_score = st.slider(
-        "🤝 Engagement Score",
+        "🤝 Điểm tương tác app",
         0, 100, 50
     )
 
