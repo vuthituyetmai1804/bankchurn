@@ -623,49 +623,49 @@ if predict_btn:
             risk_name = "RỦI RO CAO"
             glow = "#ff5c7a"
     
-        st.markdown(f"""
-        <div class="ai-result-card">
+           st.markdown(f"""
+    <div class="ai-result-card">
     
-            <h2 style="
-                color:white;
-                text-align:center;
-                margin-bottom:35px;
-            ">
-            KẾT QUẢ DỰ ĐOÁN
-            </h2>
+        <h2 style="
+            color:white;
+            text-align:center;
+            margin-bottom:35px;
+        ">
+        KẾT QUẢ DỰ ĐOÁN
+        </h2>
     
-            <div class="ai-circle"
-            style="
-                border-color:{glow};
-                box-shadow:
-                0 0 45px {glow};
-            ">
+        <div class="ai-circle"
+        style="
+            border-color:{glow};
+            box-shadow:
+            0 0 45px {glow};
+        ">
     
-                <div class="ai-percent">
-                    {risk_percent}%
-                </div>
-    
-            </div>
-    
-            <div class="ai-risk-title">
-                {risk_name}
-            </div>
-    
-            <div class="ai-sub">
-                Khách hàng có khả năng rời bỏ dịch vụ
-            </div>
-    
-            <div class="ai-mini-card">
-    
-                <div class="ai-mini-title">
-                    🎯 Khuyến nghị hành động
-                </div>
-    
-                <div class="ai-mini-content">
-                    {recommendation}
-                </div>
-    
+            <div class="ai-percent">
+                {risk_percent}%
             </div>
     
         </div>
-        """, unsafe_allow_html=True)
+    
+        <div class="ai-risk-title">
+            {risk_name}
+        </div>
+    
+        <div class="ai-sub">
+            Khách hàng có khả năng rời bỏ dịch vụ
+        </div>
+    
+        <div class="ai-mini-card">
+    
+            <div class="ai-mini-title">
+                🎯 Khuyến nghị hành động
+            </div>
+    
+            <div class="ai-mini-content">
+                {recommendation}
+            </div>
+    
+        </div>
+    
+    </div>
+    """, unsafe_allow_html=True)
