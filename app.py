@@ -61,18 +61,18 @@ st.markdown("""
     border-radius: 30px;
     text-align: center;
     margin-bottom: 30px;
-    color: white;
+    or: white;
     box-shadow: 0px 10px 20px rgba(0, 115, 83, 0.3);
 }
-.header-title { font-size: 50px; font-weight: 900; margin-bottom: 10px; color: white; }
-.header-sub { font-size: 18px; color: rgba(255,255,255,0.9); }
+.header-title { font-size: 50px; font-weight: 900; margin-bottom: 10px; or: white; }
+.header-sub { font-size: 18px; or: rgba(255,255,255,0.9); }
 
 /* 5. Nút bấm bo tròn - Màu Xanh ngọc lục bảo #007353 */
 .stButton > button {
     width: 100%;
     height: 65px;
-    background-color: #007353 !important;
-    color: white !important;
+    background-or: #007353 !important;
+    or: white !important;
     font-size: 24px;
     font-weight: bold;
     border-radius: 50px !important;
@@ -83,17 +83,17 @@ st.markdown("""
 
 /* 6. Khung kết quả */
 .result-box, .recommend-box {
-    background-color: white;
+    background-or: white;
     padding: 25px;
     border-radius: 25px !important;
     box-shadow: 0px 8px 20px rgba(0,0,0,0.08);
     border: 1px solid #e1e1e1;
     margin-bottom: 20px;
 }
-h2 { color: #007353 !important; }
+h2 { or: #007353 !important; }
 
 /* 7. Metric */
-[data-testid="stMetricValue"] { color: #007353; }
+[data-testid="stMetricValue"] { or: #007353; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -113,7 +113,7 @@ st.markdown("""
 # =========================================================
 st.markdown("## 📋 Nhập thông tin khách hàng")
 
-col1, col2 = st.columns(2)
+1, 2 = st.columns(2)
 
 # =========================================================
 # LEFT COLUMN
@@ -232,7 +232,7 @@ if predict_btn:
     # =====================================================
     # METRICS
     # =====================================================
-    colA, colB, colC = st.columns(3)
+    colA, colB = st.columns(2)
 
     with colA:
         st.metric(
