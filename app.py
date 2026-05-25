@@ -132,11 +132,13 @@ with right_col:
     st.markdown('<div class="section-title">2. KẾT QUẢ PHÂN TÍCH & DỰ ĐOÁN</div>', unsafe_allow_html=True)
     
     # Nếu người dùng bấm nút dự đoán
+    # --- CỘT BÊN PHẢI: HIỂN THỊ KẾT QUẢ ---
+with right_col:
+    st.markdown('<div class="section-title">2. KẾT QUẢ PHÂN TÍCH & DỰ ĐOÁN</div>', unsafe_allow_html=True)
+    
+    # Nếu người dùng bấm nút dự đoán
     if predict_btn:
-        # Chuẩn hóa dữ liệu đầu vào theo đúng tên cột khi Train
-        # (Bạn nhớ đổi tên các biến cho trùng khớp với tập dữ liệu X_train cũ của bạn nhé)
         active_val = 1 if active_member == "Có" else 0
-        
         features_order = ['monthly_ir', 'credit_sco', 'nums_service', 'engagement_score', 'balance', 'age', 'active_member']
         input_data = pd.DataFrame([[monthly_ir, credit_sco, nums_service, engagement_score, balance, age, active_val]], 
                                    columns=features_order)
@@ -145,48 +147,50 @@ with right_col:
         risk_score = model.predict_proba(input_data)[0][1]
         risk_percent = round(risk_score * 100, 2)
         
-        # Biện luận nhãn và màu sắc dựa trên xác suất rủi ro rời bỏ
+        # Biện luận nhãn và màu sắc (Giữ nguyên phần logic này nhé)
         if risk_percent < 35:
             color = "#2E7D32"        # Xanh lá đậm
             bg_color = "#E8F5E9"     # Xanh lá nhạt
             risk_level = "THẤP (Low Risk)"
             prediction_text = "🟢 DỰ ĐOÁN: Ở lại (STAY)"
-            recommendation = "Khách hàng rất trung thành. Ngân hàng cần duy trì chất lượng dịch vụ hiện tại và đưa vào danh sách ưu tiên trải nghiệm các sản phẩm đầu tư/tín dụng cao cấp mới."
+            recommendation = "Khách hàng rất trung thành. Ngân hàng cần duy trì chất lượng dịch vụ hiện tại..."
         elif risk_percent <= 65:
             color = "#F57C00"        # Cam
             bg_color = "#FFF3E0"     # Cam nhạt
             risk_level = "TRUNG BÌNH (Medium Risk)"
             prediction_text = "🟡 DỰ ĐOÁN: Có nguy cơ rời bỏ (CHURN)"
-            recommendation = "Khách hàng đang ở vùng lưỡng lự. Hệ thống khuyến nghị RM (Quản lý quan hệ khách hàng) chủ động gửi chương trình ưu đãi phí chuyển khoản, tích điểm hoàn tiền hoặc gọi điện chăm sóc để thắt chặt tương tác."
+            recommendation = "Khách hàng đang ở vùng lưỡng lự. Hệ thống khuyến nghị RM chủ động gửi chương trình ưu đãi phí chuyển khoản..."
         else:
             color = "#C62828"        # Đỏ
             bg_color = "#FFEBEE"     # Đỏ nhạt
             risk_level = "CAO (High Risk)"
             prediction_text = "🔴 DỰ ĐOÁN: Rời bỏ (CHURN)"
-            recommendation = "🚨 BÁO ĐỘNG ĐỎ! Khách hàng có khả năng cao sẽ đóng tài khoản. Cần kích hoạt ngay quy trình giữ chân khẩn cấp: Tặng gói đặc quyền ưu đãi lãi suất, miễn toàn bộ phí dịch vụ trong vòng 3 tháng tới."
+            recommendation = "🚨 BÁO ĐỘNG ĐỎ! Khách hàng có khả năng cao sẽ đóng tài khoản..."
 
-        # Hiển thị khối kết quả sang xịn mịn
+        # >>> DÁN ĐOẠN HTML MỚI TINH VÀO ĐÂY THAY CHO KHỐI CŨ <<<
         st.markdown(f"""
-        <div class="result-container">
-            <p style="font-size: 14px; color: #64748B; margin-bottom: 5px; font-weight: 600;">RISK SCORE (Tỷ lệ rủi ro dự đoán)</p>
-            <h1 style="color: {color}; margin-top: 0; font-size: 48px; font-weight: 800;">{risk_percent}%</h1>
+        <div style="background-color: white; padding: 28px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid #EAF2F8; margin-top: 10px;">
+            <p style="font-size: 13px; color: #64748B; margin-bottom: 3px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">RISK SCORE (Tỷ lệ rủi ro)</p>
+            <h1 style="color: {color}; margin-top: 0; font-size: 52px; font-weight: 800; line-height: 1;">{risk_percent}%</h1>
             
-            <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 15px 0;">
-            
-            <div style="background-color: {bg_color}; border-left: 5px solid {color}; padding: 12px 15px; border-radius: 4px; margin-bottom: 15px;">
-                <span style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: #475569; font-weight: bold;">Mức độ rủi ro:</span>
-                <strong style="color: {color}; font-size: 15px; margin-left: 5px;">{risk_level}</strong>
+            <div style="display: inline-block; background-color: {bg_color}; padding: 6px 16px; border-radius: 20px; margin-top: 10px; margin-bottom: 20px;">
+                <span style="font-size: 13px; color: {color}; font-weight: 700;">● Mức độ: {risk_level}</span>
             </div>
             
-            <h3 style="color: #1E293B; font-weight: 700; margin-top: 20px;">{prediction_text}</h3>
+            <h3 style="color: #1E293B; font-weight: 700; margin-top: 5px; font-size: 20px; display: flex; align-items: center; gap: 8px;">
+                {prediction_text}
+            </h3>
             
-            <div class="recommend-box" style="background-color: white; border: 1px dashed {color}; border-left: 6px solid {color};">
-                <strong style="color: {color}; font-size: 16px;">🎯 Khuyến nghị hành động chủ động:</strong>
-                <p style="margin-top: 8px; color: #334155;">{recommendation}</p>
+            <div style="background-color: {bg_color}33; border-left: 5px solid {color}; padding: 20px; border-radius: 8px; margin-top: 20px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02); border-top: 1px solid {color}15; border-right: 1px solid {color}15; border-bottom: 1px solid {color}15;">
+                <div style="display: flex; align-items: center; gap: 8px; color: {color}; font-weight: 700; font-size: 15px;">
+                    <span>🎯</span> Khuyến nghị hành động chủ động
+                </div>
+                <p style="margin-top: 10px; color: #475569; font-size: 14px; line-height: 1.6; font-weight: 500; margin-bottom: 0;">
+                    {recommendation}
+                </p>
             </div>
         </div>
         """, unsafe_allow_html=True)
         
     else:
-        # Khi chưa bấm nút, hiển thị thông báo hướng dẫn nhẹ nhàng
         st.info("👋 Vui lòng điều chỉnh thông tin khách hàng ở cột bên trái và bấm nút 'CHẠY TEST CASE MÔ HÌNH' để xem kết quả phân tích rủi ro.")
