@@ -26,28 +26,31 @@ st.set_page_config(
 # =========================================================
 # CUSTOM CSS 
 # =========================================================
+# =========================================================
+# CSS & WAVE EFFECT
+# =========================================================
 st.markdown("""
 <style>
-/* 1. Nền tổng thể: 40% Vàng ban mai (#FFC62F) */
+/* 1. Thiết lập chung cho nền trang */
 .stApp {
-    background-color: rgba(255, 198, 47, 0.4) !important;
+    background-color: #f4f6f9;
 }
 
-/* 2. Lớp sóng sợi trắng uốn lượn */
+/* 2. Lớp sóng uốn lượn cố định (Wave Container) */
 .wave-container {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 300px;
+    height: 200px;
     z-index: 0;
     pointer-events: none;
-    opacity: 0.6;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='none' stroke='white' stroke-width='1.5' d='M0,160C240,320,480,0,720,160C960,320,1200,0,1440,160'/%3E%3Cpath fill='none' stroke='white' stroke-width='1' d='M0,200C240,360,480,40,720,200C960,360,1200,40,1440,200'/%3E%3C/svg%3E");
-    background-repeat: repeat-x;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23319151' fill-opacity='0.15' d='M0,192L48,176C96,160,192,128,288,133.3C384,139,480,181,576,197.3C672,213,768,203,864,170.7C960,139,1056,85,1152,80C1248,75,1344,117,1392,138.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
-/* 3. Container nội dung */
+/* 3. Container nội dung chính */
 .block-container {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 30px;
@@ -57,42 +60,50 @@ st.markdown("""
     position: relative;
 }
 
-/* 4. Header BIDV */
+/* 4. Header chuyên nghiệp */
 .header-box {
-    background: #006B68;
+    background: #319151;
     padding: 40px;
     border-radius: 30px;
     text-align: center;
     margin-bottom: 30px;
     color: white;
+    box-shadow: 0px 10px 20px rgba(49, 145, 81, 0.3);
 }
-.header-title { font-size: 50px !important; font-weight: 900 !important; color: white !important; }
-.header-sub { font-size: 18px !important; color: rgba(255,255,255,0.9) !important; }
+.header-title { font-size: 50px; font-weight: 900; margin-bottom: 10px; color: white; }
+.header-sub { font-size: 18px; color: rgba(255,255,255,0.9); }
 
-/* 5. Nút bấm BIDV */
+/* 5. Nút bấm bo tròn */
 .stButton > button {
     width: 100%;
-    height: 65px !important;
-    background-color: #006B68 !important;
+    height: 65px;
+    background-color: #319151 !important;
     color: white !important;
-    font-size: 24px !important;
-    font-weight: bold !important;
+    font-size: 24px;
+    font-weight: bold;
     border-radius: 50px !important;
     border: none;
+    transition: all 0.3s ease;
 }
+.stButton > button:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
-/* 6. Cỡ chữ nhãn và input */
-label { font-size: 18px !important; font-weight: 600 !important; }
-h2 { font-size: 32px !important; color: #006B68 !important; }
-
-/* 7. Định dạng chữ trong các ô kết quả */
+/* 6. Khung kết quả */
 .result-box, .recommend-box {
-    font-size: 18px !important;
+    background-color: white;
+    padding: 25px;
+    border-radius: 25px !important;
+    box-shadow: 0px 8px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e1e1e1;
+    margin-bottom: 20px;
 }
+h2 { color: #319151 !important; }
+
+/* 7. Metric */
+[data-testid="stMetricValue"] { color: #319151; }
 </style>
 """, unsafe_allow_html=True)
 
-# Kích hoạt lớp sóng
+# Dòng này là bắt buộc để lớp sóng xuất hiện
 st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 # =========================================================
 # HEADER
