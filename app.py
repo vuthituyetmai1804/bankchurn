@@ -70,21 +70,29 @@ st.markdown("""
 st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 
 # HEADER TỐI ƯU: LOGO VÀ TIÊU ĐỀ GẦN NHAU
-# =========================================================
-st.markdown("""
-    <div style="display: flex; justify-content: center; margin-top: 10px; margin-bottom: 5px;">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg" width="400" style="display: block;">
-    </div>
-    <div style="text-align: center; margin-bottom: 30px;">
-        <h1 style="color: #007353; font-weight: 800; margin-top: 0px; margin-bottom: 5px; font-size: 34px;">
-            🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ
-        </h1>
-        <p style="font-size: 18px; color: #444; font-style: italic; font-weight: 300; margin-top: 0;">
-            Giải pháp phân tích hành vi khách hàng, hỗ trợ chiến lược giữ chân chủ động tại BIDV
-        </p>
-    </div>
-""", unsafe_allow_html=True)
+import streamlit as st
+import pandas as pd
+import joblib
 
+# ... (Giữ nguyên phần load_model như cũ) ...
+
+# =========================================================
+# HEADER VỚI LOGO (Sử dụng URL từ Wikipedia)
+# =========================================================
+# Tạo cột để căn giữa logo
+col_logo_l, col_logo_m, col_logo_r = st.columns([1, 2, 1])
+with col_logo_m:
+    st.image("https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg", width=300)
+
+# Tiêu đề và dòng mô tả
+st.markdown("""
+<div style="text-align: center; margin-bottom: 30px;">
+    <h2 style="color: #007353; font-weight: 800; margin-bottom: 5px;">🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</h2>
+    <p style="font-size: 17px; color: #555; font-style: italic; font-weight: 300;">
+        Giải pháp phân tích hành vi khách hàng, hỗ trợ chiến lược giữ chân chủ động tại BIDV
+    </p>
+</div>
+""", unsafe_allow_html=True)
 st.markdown("---")
 
 col1, col2, col3 = st.columns([1, 1, 1.2])
