@@ -608,58 +608,58 @@ if predict_btn:
     # =====================================================
     with right_panel:
 
-    if risk_percent < 30:
-        risk_name = "🟢 RỦI RO THẤP"
-        glow = "#00ffae"
-
-    elif risk_percent <= 70:
-        risk_name = "🟡 RỦI RO TRUNG BÌNH"
-        glow = "#ffd43b"
-
-    else:
-        risk_name = "🔴 RỦI RO CAO"
-        glow = "#ff5c7a"
-
-    html_code = f"""
-    <div class="ai-result-card">
-
-        <h2 style="color:white;text-align:center;margin-bottom:35px;">
-            KẾT QUẢ DỰ ĐOÁN
-        </h2>
-
-        <div class="ai-circle"
-        style="
-            border-color:{glow};
-            box-shadow:0 0 45px {glow};
-        ">
-
-            <div class="ai-percent">
-                {risk_percent}%
+        if risk_percent < 30:
+            risk_name = "🟢 RỦI RO THẤP"
+            glow = "#00ffae"
+    
+        elif risk_percent <= 70:
+            risk_name = "🟡 RỦI RO TRUNG BÌNH"
+            glow = "#ffd43b"
+    
+        else:
+            risk_name = "🔴 RỦI RO CAO"
+            glow = "#ff5c7a"
+    
+        html_code = f"""
+        <div class="ai-result-card">
+    
+            <h2 style="color:white;text-align:center;margin-bottom:35px;">
+                KẾT QUẢ DỰ ĐOÁN
+            </h2>
+    
+            <div class="ai-circle"
+            style="
+                border-color:{glow};
+                box-shadow:0 0 45px {glow};
+            ">
+    
+                <div class="ai-percent">
+                    {risk_percent}%
+                </div>
+    
             </div>
-
-        </div>
-
-        <div class="ai-risk-title">
-            {risk_name}
-        </div>
-
-        <div class="ai-sub">
-            Khách hàng có khả năng rời bỏ dịch vụ
-        </div>
-
-        <div class="ai-mini-card">
-
-            <div class="ai-mini-title">
-                🎯 Khuyến nghị hành động
+    
+            <div class="ai-risk-title">
+                {risk_name}
             </div>
-
-            <div class="ai-mini-content">
-                {recommendation}
+    
+            <div class="ai-sub">
+                Khách hàng có khả năng rời bỏ dịch vụ
             </div>
-
+    
+            <div class="ai-mini-card">
+    
+                <div class="ai-mini-title">
+                    🎯 Khuyến nghị hành động
+                </div>
+    
+                <div class="ai-mini-content">
+                    {recommendation}
+                </div>
+    
+            </div>
+    
         </div>
-
-    </div>
-    """
+        """
 
     st.markdown(html_code, unsafe_allow_html=True)
