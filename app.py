@@ -128,7 +128,7 @@ with col1:
     )
 
 # =========================================================
-# RIGHT COLUMN (Đã bổ sung các tính năng thiếu)
+# RIGHT COLUMN
 # =========================================================
 with col2:
     nums_card = st.slider(
@@ -172,36 +172,53 @@ predict_btn = st.button("🔍 DỰ ĐOÁN NGAY")
 if predict_btn:
 
     # =====================================================
-    # 1. TẠO DATAFRAME VỚI ĐÚNG THỨ TỰ CỘT MÀ SCALER YÊU CẦU
+    # 1. TẠO DATAFRAME CHỈ GỒM KHỚP 7 CỘT CỦA SCALER
     # =====================================================
     scaler_features = [
         'credit_sco', 'age', 'balance', 'monthly_ir', 
-        'nums_card', 'nums_service', 'engagement_score', 'tenure_ye'
+        'nums_card', 'nums_service', 'engagement_score'
     ]
     
-    input_df = pd.DataFrame([{
+    input_for_scaler = pd.DataFrame([{
         'credit_sco': credit_sco,
         'age': age,
         'balance': balance,
         'monthly_ir': monthly_ir,
         'nums_card': nums_card,
         'nums_service': nums_service,
-        'engagement_score': engagement_score,
-        'tenure_ye': tenure_ye
+        'engagement_score': engagement_score
     }])
     
-    # Đảm bảo thứ tự cột chuẩn xác 100%
-    input_df = input_df[scaler_features]
+    # Đảm bảo thứ tự cột chuẩn xác tuyệt đối cho bộ lọc scaler
+    input_for_scaler = input_for_scaler[scaler_features]
 
     # =====================================================
-    # 2. SCALE INPUT (Đã sửa lỗi gọi biến trống)
+    # 2. TIẾN HÀNH SCALE DỮ LIỆU CHUẨN 7 CỘT
     # =====================================================
-    input_scaled = scaler.transform(input_df)
+    scaled_array = scaler.transform(input_for_scaler)
+    
+    # Chuyển mảng đã scale ngược lại thành DataFrame để dễ ghép cột tiếp theo
+    input_scaled_df = pd.DataFrame(scaled_array, columns=scaler_features)
 
     # =====================================================
-    # 3. PREDICT PROBABILITY
+    # 3. GHÉP THÊM CÁC CỘT KHÔNG SCALE VÀO ĐỂ RA ĐẦU VÀO CHO MODEL
     # =====================================================
-    risk_score = model.predict_proba(input_scaled)[0][1]
+    input_scaled_df['tenure_ye'] = tenure_ye
+    input_scaled_df['active_member'] = active_member
+
+    # Tự động lấy danh sách và thứ tự cột mà MODEL yêu cầu khi train
+    if hasattr(model, 'feature_names_in_'):
+        model_features = model.feature_names_in_
+        final_input = input_scaled_df[model_features]
+    else:
+        # Nếu model không lưu thuộc tính tên, mặc định gộp đủ 9 cột theo thứ tự hợp lý
+        model_features = scaler_features + ['tenure_ye', 'active_member']
+        final_input = input_scaled_df[model_features]
+
+    # =====================================================
+    # 4. DỰ ĐOÁN XÁC SUẤT (PREDICT PROBABILITY)
+    # =====================================================
+    risk_score = model.predict_proba(final_input)[0][1]
     risk_percent = round(risk_score * 100, 2)
 
     # =====================================================
