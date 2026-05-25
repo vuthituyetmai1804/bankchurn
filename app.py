@@ -307,7 +307,144 @@ PROGRESS
 
     background: linear-gradient(90deg, #006B68, #00A19D);
 }
+/* =========================
+RESULT AI CARD
+========================= */
 
+.ai-result-card {
+
+    background: linear-gradient(
+        145deg,
+        #072c2b,
+        #0b3d3b
+    );
+
+    border-radius: 28px;
+
+    padding: 40px;
+
+    min-height: 620px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 0 40px rgba(0,107,104,0.25);
+
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* glow circle */
+
+.ai-circle {
+
+    width: 240px;
+    height: 240px;
+
+    border-radius: 50%;
+
+    margin: auto;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(0,255,180,0.18),
+            rgba(0,255,180,0.02)
+        );
+
+    border: 6px solid rgba(0,255,180,0.4);
+
+    box-shadow:
+        0 0 40px rgba(0,255,180,0.35),
+        inset 0 0 40px rgba(0,255,180,0.15);
+
+    animation: pulseGlow 2.5s infinite;
+}
+
+@keyframes pulseGlow {
+
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.03);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.ai-percent {
+
+    font-size: 68px;
+
+    font-weight: 800;
+
+    color: white;
+}
+
+.ai-risk-title {
+
+    text-align: center;
+
+    color: white;
+
+    font-size: 40px;
+
+    font-weight: 700;
+
+    margin-top: 35px;
+}
+
+.ai-sub {
+
+    text-align: center;
+
+    color: rgba(255,255,255,0.75);
+
+    font-size: 20px;
+
+    margin-top: 10px;
+}
+
+.ai-mini-card {
+
+    margin-top: 30px;
+
+    background: rgba(255,255,255,0.06);
+
+    border-radius: 20px;
+
+    padding: 22px;
+
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.ai-mini-title {
+
+    color: rgba(255,255,255,0.7);
+
+    font-size: 18px;
+}
+
+.ai-mini-content {
+
+    color: white;
+
+    font-size: 22px;
+
+    margin-top: 12px;
+
+    font-weight: 600;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -397,15 +534,6 @@ predict_btn = st.button("🔍 DỰ ĐOÁN NGAY")
 # PREDICTION LOGIC
 # =========================================================
 if predict_btn:
-
-    with st.spinner("🤖 AI đang phân tích hành vi khách hàng..."):
-
-        scan = st.progress(0)
-
-        for percent in range(100):
-            time.sleep(0.01)
-            scan.progress(percent + 1)
-
     # =====================================================
     # 1. TẠO DATAFRAME VỚI ĐÚNG 7 CỘT THEO ĐÚNG THỨ TỰ YÊU CẦU
     # =====================================================
@@ -453,109 +581,91 @@ if predict_btn:
         color = "red"
 
     # =====================================================
-    # OUTPUT GRAPHICS
     # =====================================================
-    st.markdown("---")
-    st.markdown("# 📊 KẾT QUẢ PHÂN TÍCH")
-
+    # AI RESULT LAYOUT
     # =====================================================
-    # METRICS
-    # =====================================================
-    left, right = st.columns([1.1, 1])
 
-    with left:
-
-        fig = go.Figure(go.Indicator(
-
-            mode="gauge+number",
-
-            value=risk_percent,
-
-            number={
-                'suffix': "%",
-                'font': {'size': 44}
-            },
-
-            title={
-                'text': "CHURN RISK SCORE"
-            },
-
-            gauge={
-
-                'axis': {'range': [0, 100]},
-
-                'bar': {'color': "#006B68"},
-
-                'steps': [
-
-                    {'range': [0, 30], 'color': "#d7f5ea"},
-                    {'range': [30, 70], 'color': "#ffe7a0"},
-                    {'range': [70, 100], 'color': "#ffb0b0"}
-                ],
-
-                'threshold': {
-
-                    'line': {'color': "red", 'width': 5},
-
-                    'thickness': 0.8,
-
-                    'value': risk_percent
-                }
-            }
-        ))
-
-        fig.update_layout(
-
-            height=380,
-
-            margin=dict(l=20, r=20, t=60, b=20),
-
-            paper_bgcolor="rgba(0,0,0,0)",
-
-            font={'color': "#006B68"}
-        )
-
-        st.plotly_chart(fig, use_container_width=True)
-
-    with right:
-
-        st.metric(
-            "RISK LEVEL",
-            risk_level
-        )
-
-        st.metric(
-            "PREDICTION",
-            "CHURN" if risk_percent >= 50 else "STAY"
-        )
-
-        st.metric(
-            "SUCCESS RETENTION",
-            f"{100-risk_percent}%"
-        )
-    # =====================================================
-    # PREDICTION RESULT BOX
-    # =====================================================
-    st.markdown(f"""
-    <div class="result-box">
-        <h2 style="color:{color}; text-align: center; margin: 0;">
-            {prediction_text}
-        </h2>
-    </div>
-    """, unsafe_allow_html=True)
+    left_panel, right_panel = st.columns([1.15, 0.85])
 
     # =====================================================
-    # RECOMMENDATION BOX
+    # LEFT PANEL
     # =====================================================
-    st.markdown(f"""
-    <div class="recommend-box"
-    style="
-        background-color:white;
-        border-left:8px solid {color};
-        margin-top:20px;
-        box-shadow: 0px 0px 15px rgba(0,0,0,0.08);
-    ">
-    <h3 style="margin-top: 0;">🎯 Khuyến nghị hành động:</h3>
-    <p style="margin-bottom: 0;">{recommendation}</p>
-    </div>
-    """, unsafe_allow_html=True)
+    
+    with left_panel:
+    
+        st.markdown("""
+        <div class="custom-card">
+        <h2>📋 Thông tin khách hàng</h2>
+        <p style="color:#5f6c7b;">
+        AI Banking Analytics • BIDV Churn Prediction
+        </p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # =====================================================
+    # RIGHT PANEL
+    # =====================================================
+    
+    with right_panel:
+    
+        if risk_percent < 30:
+    
+            risk_name = "RỦI RO THẤP"
+            glow = "#00ffae"
+    
+        elif risk_percent <= 70:
+    
+            risk_name = "RỦI RO TRUNG BÌNH"
+            glow = "#ffd43b"
+    
+        else:
+    
+            risk_name = "RỦI RO CAO"
+            glow = "#ff5c7a"
+    
+        st.markdown(f"""
+        <div class="ai-result-card">
+    
+            <h2 style="
+                color:white;
+                text-align:center;
+                margin-bottom:35px;
+            ">
+            KẾT QUẢ DỰ ĐOÁN
+            </h2>
+    
+            <div class="ai-circle"
+            style="
+                border-color:{glow};
+                box-shadow:
+                0 0 45px {glow};
+            ">
+    
+                <div class="ai-percent">
+                    {risk_percent}%
+                </div>
+    
+            </div>
+    
+            <div class="ai-risk-title">
+                {risk_name}
+            </div>
+    
+            <div class="ai-sub">
+                Khách hàng có khả năng rời bỏ dịch vụ
+            </div>
+    
+            <div class="ai-mini-card">
+    
+                <div class="ai-mini-title">
+                    🎯 Khuyến nghị hành động
+                </div>
+    
+                <div class="ai-mini-content">
+                    {recommendation}
+                </div>
+    
+            </div>
+    
+        </div>
+        """, unsafe_allow_html=True)
