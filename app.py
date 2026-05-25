@@ -22,11 +22,11 @@ except:
 # =========================================================
 st.markdown("""
 <style>
-    /* Nền đổi màu mạnh mẽ và sâu hơn */
+    /* Gradient tinh tế: Chuyển từ Xanh BIDV nhẹ sang Xanh ngọc lục bảo nhạt */
     .stApp {
-        background: linear-gradient(120deg, #007353, #fcc200, #007353);
+        background: linear-gradient(135deg, #e8f5e9, #fff3e0, #ffffff);
         background-size: 300% 300%;
-        animation: gradientAnimation 10s ease infinite;
+        animation: gradientAnimation 20s ease infinite;
     }
 
     @keyframes gradientAnimation {
@@ -35,12 +35,13 @@ st.markdown("""
         100% { background-position: 0% 50%; }
     }
     
-    /* Các thẻ chứa nội dung nổi bật hơn */
+    /* Nền ô nội dung màu trắng đục, giúp nổi bật chữ */
     div[data-testid="column"] {
-        background: rgba(255, 255, 255, 0.9); /* Nền đục hơn để dễ đọc chữ */
-        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.85); 
+        border: 1px solid #dcdcdc;
+        border-radius: 15px;
         padding: 20px !important;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
     /* 1. Header to và đẹp hơn */
     .header-box { 
