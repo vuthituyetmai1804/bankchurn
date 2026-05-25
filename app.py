@@ -17,7 +17,7 @@ except Exception:
     model = None
 
 # =========================================================
-# CSS TỐI ƯU GIAO DIỆN
+# CSS TỐI ƯU KÍCH THƯỚC CHỮ
 # =========================================================
 st.markdown("""
 <style>
@@ -29,8 +29,11 @@ st.markdown("""
     }
     .header-box { background: #007353; padding: 15px; border-radius: 10px; color: white; text-align: center; margin-bottom: 20px; }
     div[data-testid="column"] { background: rgba(255, 255, 255, 0.9); padding: 20px !important; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .result-box { background-color: white; padding: 20px; border-radius: 15px; border: 1px solid #e1e1e1; margin-bottom: 15px; }
-    .recommend-box { background-color: white; padding: 20px; border-radius: 15px; box-shadow: 0px 0px 15px rgba(0,0,0,0.08); }
+    
+    /* Điều chỉnh kích thước chữ trong kết quả */
+    .result-text { font-size: 16px; font-weight: 600; text-align: center; padding: 10px; }
+    .recommend-title { font-size: 15px; font-weight: bold; margin-bottom: 5px; }
+    .recommend-body { font-size: 14px; color: #444; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -66,31 +69,30 @@ with col3:
         input_df = pd.DataFrame([{'monthly_ir': monthly_ir, 'credit_sco': credit_sco, 'nums_service': nums_service, 
                                   'engagement_score': engagement_score, 'balance': balance, 'age': age, 'active_member': active_member}])
         
-        # LOGIC TỪ YÊU CẦU CỦA BẠN
         risk_score = model.predict_proba(input_df[features_order])[0][1]
         risk_percent = round(risk_score * 100, 2)
 
         if risk_percent < 30:
-            risk_level, prediction_text, recommendation, color = "🟢 LOW RISK", "✅ Khách hàng ổn định", "✅ Duy trì mối quan hệ tốt và tiếp tục chăm sóc định kỳ.", "green"
+            risk_level, prediction_text, recommendation, color = "🟢 LOW RISK", "✅ Khách hàng ổn định", "Duy trì mối quan hệ tốt và tiếp tục chăm sóc định kỳ.", "green"
         elif risk_percent <= 70:
-            risk_level, prediction_text, recommendation, color = "🟡 MEDIUM RISK", "⚠️ Khách hàng có nguy cơ rời bỏ", "📞 Nên chăm sóc chủ động: Gọi điện tư vấn, tặng ưu đãi lãi suất, voucher.", "orange"
+            risk_level, prediction_text, recommendation, color = "🟡 MEDIUM RISK", "⚠️ Khách hàng có nguy cơ rời bỏ", "Nên chăm sóc chủ động: Gọi điện tư vấn, tặng ưu đãi lãi suất, voucher.", "orange"
         else:
-            risk_level, prediction_text, recommendation, color = "🔴 HIGH RISK", "⚠️ Khách hàng có nguy cơ rời bỏ", "🚨 Cần liên hệ khẩn cấp trong 24h để giữ chân khách hàng.", "red"
+            risk_level, prediction_text, recommendation, color = "🔴 HIGH RISK", "⚠️ Khách hàng có nguy cơ rời bỏ", "Cần liên hệ khẩn cấp trong 24h để giữ chân khách hàng.", "red"
 
-        # HIỂN THỊ METRICS
+        # Hiển thị metrics với font size chuẩn
         cA, cB = st.columns(2)
         cA.metric("RISK SCORE", f"{risk_percent}%")
-        cB.metric("RISK LEVEL", risk_level)
+        cB.metric("LEVEL", risk_level.split(" ")[1]) # Chỉ lấy chữ (LOW/MEDIUM/HIGH) để gọn
         
         st.progress(int(risk_percent))
         
-        # BOX KẾT QUẢ
-        st.markdown(f'<div class="result-box"><h4 style="color:{color}; text-align: center;">{prediction_text}</h4></div>', unsafe_allow_html=True)
+        # Kết quả text tinh tế hơn
+        st.markdown(f'<div class="result-text" style="color:{color};">{prediction_text}</div>', unsafe_allow_html=True)
         
-        # BOX KHUYẾN NGHỊ
-        st.markdown(f"""<div class="recommend-box" style="border-left: 8px solid {color};">
-        <h4 style="margin: 0;">🎯 Khuyến nghị hành động:</h4>
-        <p style="margin: 5px 0 0 0;">{recommendation}</p></div>""", unsafe_allow_html=True)
+        # Khuyến nghị tinh tế
+        st.markdown(f"""<div style="border-left: 5px solid {color}; padding-left: 10px; background: #fff; padding: 10px;">
+        <div class="recommend-title">🎯 Khuyến nghị hành động:</div>
+        <div class="recommend-body">{recommendation}</div></div>""", unsafe_allow_html=True)
         
     elif predict_btn and not model:
         st.error("Lỗi: Không tìm thấy model!")
