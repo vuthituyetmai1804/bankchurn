@@ -2,222 +2,164 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# =========================================================
-# 1. PAGE CONFIG (Bắt buộc đặt trên cùng)
-# =========================================================
+# 1. Cấu hình trang nền rộng
 st.set_page_config(
     page_title="BIDV Churn Prediction",
     page_icon="🏦",
-    layout="wide"  # Kích hoạt màn hình rộng để chia 2 cột Trái - Phải như thiết kế mẫu
+    layout="wide"
 )
 
-# =========================================================
-# 2. LOAD MODEL (Giữ nguyên logic nạp file của bạn)
-# =========================================================
+# 2. Tải mô hình thuật toán
 @st.cache_resource
 def load_my_model():
     return joblib.load("bidv_churn_modeltuning.pkl")
 
 try:
     model = load_my_model()
-except Exception as e:
-    st.error("🚨 Không tìm thấy file 'bidv_churn_modeltuning.pkl'. Hãy kiểm tra lại kho GitHub!")
+except:
+    st.error("🚨 Không tìm thấy file mô hình 'bidv_churn_modeltuning.pkl'!")
     st.stop()
 
-# =========================================================
-# 3. CUSTOM CSS (Lột xác màu sắc và hiệu ứng chuẩn BIDV)
-# =========================================================
+# 3. CSS dọn dẹp giao diện phẳng và bo góc mềm mại
 st.markdown("""
 <style>
-/* Nền xám nhạt cao cấp cho toàn bộ ứng dụng */
-html, body, [data-testid="stAppViewContainer"] {
-    background-color: #F8F9FA;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
+/* Xóa các đường viền thừa của Streamlit */
+div[data-testid="stForm"] { border: none !important; }
+.block-container { padding-top: 2.5rem !important; }
 
-/* Đè lại padding mặc định của Streamlit để giao diện khít đẹp */
-[data-testid="stSidebarCollapse"] {
-    display: none;
+/* Header tối giản phong cách Dashboard hiện đại */
+.main-header {
+    background-color: #FFFFFF;
+    padding: 20px 0;
+    border-bottom: 1px solid #E2E8F0;
+    margin-bottom: 40px;
 }
-.block-container {
-    padding-top: 2rem !important;
-    padding-bottom: 2rem !important;
-}
-
-/* Thiết kế Header Box dải màu Gradient chuẩn BIDV */
-.header-box {
-    background: linear-gradient(135deg, #004B87 0%, #0072CE 100%);
-    padding: 30px;
-    border-radius: 12px;
-    color: white;
-    text-align: center;
-    margin-bottom: 35px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-.header-title {
-    font-size: 30px;
+.main-title {
+    font-size: 28px;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    color: #004B87;
+    letter-spacing: -0.5px;
 }
-.header-sub {
-    font-size: 15px;
-    opacity: 0.9;
-    margin-top: 8px;
-}
-
-/* Thanh tiêu đề phân chia khu vực */
-.section-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: #1C355E;
-    border-bottom: 3px solid #0072CE;
-    padding-bottom: 8px;
-    margin-bottom: 25px;
+.main-sub {
+    font-size: 14px;
+    color: #64748B;
+    margin-top: 4px;
 }
 
-/* Tùy chỉnh Nút bấm Chạy dự đoán kích thước lớn, màu thẫm cực sang */
+/* Định hình form nhập liệu sạch sẽ */
+.input-card {
+    background-color: #F4F7FA;
+    padding: 25px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+}
+
+/* Nút bấm phẳng (Flat Design) */
 div.stButton > button {
-    background: linear-gradient(135deg, #004B87 0%, #005FA3 100%) !important;
+    background-color: #004B87 !important;
     color: white !important;
-    font-size: 18px !important;
-    font-weight: bold !important;
-    padding: 12px 30px !important;
-    border-radius: 8px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    padding: 14px 0 !important;
+    border-radius: 10px !important;
     border: none !important;
     width: 100% !important;
-    box-shadow: 0 4px 10px rgba(0,75,135,0.3) !important;
-    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(0, 75, 135, 0.15) !important;
+    transition: all 0.2s ease !important;
 }
 div.stButton > button:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 15px rgba(0,75,135,0.4) !important;
+    background-color: #003560 !important;
+    transform: translateY(-1px) !important;
 }
 
-/* Thanh radio hoạt động nằm ngang gọn gàng */
-div[data-testid="stRadio"] > div {
-    flex-direction: row !important;
-    gap: 20px;
-}
+/* Thanh chọn ngang */
+div[data-testid="stRadio"] > div { flex-direction: row !important; gap: 25px; }
 </style>
 """, unsafe_allow_html=True)
 
-# =========================================================
-# 4. HEADER
-# =========================================================
+# 4. HIỂN THỊ HEADER TỐI GIẢN
 st.markdown("""
-<div class="header-box">
-    <div class="header-title">🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</div>
-    <div class="header-sub">Ứng dụng Mô hình Cây quyết định trong Quản trị Rủi ro Ngân hàng BIDV</div>
+<div class="main-header">
+    <div class="main-title">🏦 QUAN SÁT & DỰ BÁO RỦI RO KHÁCH HÀNG RỜI BỎ</div>
+    <div class="main-sub">Hệ thống phân tích hành vi tài chính thời gian thực ứng dụng Thuật toán Cây quyết định</div>
 </div>
 """, unsafe_allow_html=True)
 
-# =========================================================
-# 5. CHIA BỐ CỤC SONG SONG (Tránh bị đẩy kết quả xuống đáy web)
-# =========================================================
-left_col, right_col = st.columns(2, gap="large")
+# 5. CHIA HAI CỘT SONG SONG
+left_col, right_col = st.columns([1.1, 0.9], gap="large")
 
-# ---------------------------------------------------------
-# --- CỘT BÊN TRÁI: NHẬP LIỆU (Gom gọn các ô nhập) ---
-# ---------------------------------------------------------
+# --- CỘT TRÁI: KHU VỰC ĐIỀU CHỈNH BIẾN ---
 with left_col:
-    st.markdown('<div class="section-title">1. NHẬP THÔNG TIN KHÁCH HÀNG</div>', unsafe_allow_html=True)
+    st.caption("⚙️ BẢNG ĐIỀU CHỈNH THÔNG SỐ")
     
-    # Chia nhỏ cột nội bộ để tối ưu không gian hiển thị
-    sub_col1, sub_col2 = st.columns(2)
-    with sub_col1:
-        age = st.slider("🎂 Tuổi", 20, 80, 35)
+    sub1, sub2 = st.columns(2, gap="medium")
+    with sub1:
+        age = st.slider("🎂 Tuổi khách hàng", 20, 80, 35)
         credit_sco = st.slider("💳 Điểm tín dụng", 495, 800, 650)
-        balance = st.number_input("💰 Số dư tài khoản (VND)", min_value=0, value=50000000, step=1000000)
+        balance = st.number_input("💰 Số dư tài khoản (VND)", min_value=0, value=50000000, step=5000000)
     
-    with sub_col2:
-        monthly_ir = st.number_input("💵 Thu nhập hàng tháng (VND)", min_value=0, value=15000000, step=1000000)
-        nums_service = st.slider("🏦 Số lượng dịch vụ sử dụng", 1, 8, 3)
-        engagement_score = st.slider("🤝 Điểm tương tác app", 0, 100, 50)
+    with sub2:
+        monthly_ir = st.number_input("💵 Thu nhập hàng tháng (VND)", min_value=0, value=15000000, step=5000000)
+        nums_service = st.slider("🏦 Số lượng dịch vụ", 1, 8, 3)
+        engagement_score = st.slider("🤝 Điểm tương tác ứng dụng", 0, 100, 50)
         
-    active_text = st.radio("📱 Hoạt động gần đây", ["Có", "Không"])
-
+    active_text = st.radio("📱 Trạng thái tương tác gần đây", ["Có", "Không"])
+    
     st.markdown("<br>", unsafe_allow_html=True)
-    predict_btn = st.button("🔍 CHẠY TEST CASE MÔ HÌNH")
+    predict_btn = st.button("🔍 CHẠY PHÂN TÍCH MÔ HÌNH")
 
-# ---------------------------------------------------------
-# --- CỘT BÊN PHẢI: HIỂN THỊ KẾT QUẢ ĐỒ HỌA SANG TRỌNG ---
-# ---------------------------------------------------------
+# --- CỘT PHẢI: KHU VỰC HIỂN THỊ KẾT QUẢ ĐẲNG CẤP ---
 with right_col:
-    st.markdown('<div class="section-title">2. KẾT QUẢ PHÂN TÍCH & DỰ ĐOÁN</div>', unsafe_allow_html=True)
+    st.caption("📊 KẾT QUẢ ĐÁNH GIÁ TỪ HỆ THỐNG")
     
     if predict_btn:
-        # =====================================================
-        # ENCODE & LOGIC GIỮ NGUYÊN 100% KHÔNG SAI LỆCH CỦA BẠN
-        # =====================================================
+        # Giữ nguyên logic tính toán của bạn
         active_member = 1 if active_text == "Có" else 0
+        features_order = ['monthly_ir', 'credit_sco', 'nums_service', 'engagement_score', 'balance', 'age', 'active_member']
         
-        features_order = [
-            'monthly_ir', 'credit_sco', 'nums_service', 
-            'engagement_score', 'balance', 'age', 'active_member'
-        ]
+        input_df = pd.DataFrame([{'monthly_ir': monthly_ir, 'credit_sco': credit_sco, 'nums_service': nums_service,
+                                  'engagement_score': engagement_score, 'balance': balance, 'age': age, 'active_member': active_member}])
         
-        input_df = pd.DataFrame([{
-            'monthly_ir': monthly_ir,
-            'credit_sco': credit_sco,
-            'nums_service': nums_service,
-            'engagement_score': engagement_score,
-            'balance': balance,
-            'age': age,
-            'active_member': active_member
-        }])
-        
-        final_input = input_df[features_order]
-        
-        # Tính toán xác suất từ mô hình tuning của bạn
-        risk_score = model.predict_proba(final_input)[0][1]
+        risk_score = model.predict_proba(input_df[features_order])[0][1]
         risk_percent = round(risk_score * 100, 2)
         
-        # Phân định màu sắc động và nội dung khuyến nghị dựa trên bộ khung cũ của bạn
+        # Thiết lập bảng màu mảnh, không dùng mảng màu đậm gây loè loẹt
         if risk_percent < 30:
-            risk_level = "THẤP (Low Risk)"
-            prediction_text = "✅ Khách hàng có khả năng tiếp tục sử dụng dịch vụ"
-            recommendation = "Duy trì mối quan hệ tốt và tiếp tục chăm sóc định kỳ, giới thiệu các gói sản phẩm tài chính dài hạn."
-            color = "#2E7D32"        # Xanh lá cây thẫm cao cấp
-            bg_color = "#E8F5E9"     # Nền xanh lá nhạt
+            risk_level = "Thấp (Low Risk)"
+            prediction_text = "Tối ưu — Khách hàng có xu hướng Gắn bó lâu dài"
+            recommendation = "Duy trì tần suất chăm sóc tự động qua app. Đề xuất các sản phẩm tích lũy chéo hoặc gói vay ưu đãi kỳ hạn dài để tối đa hóa giá trị vòng đời khách hàng."
+            brand_color = "#0A84FF" # Xanh mượt Apple
+            bg_badge = "#E5F2FF"
         elif risk_percent <= 70:
-            risk_level = "TRUNG BÌNH (Medium Risk)"
-            prediction_text = "⚠️ Khách hàng có nguy cơ rời bỏ"
-            recommendation = "Nên chăm sóc chủ động: Điều phối quản lý quan hệ khách hàng (RM) gọi điện tư vấn, đề xuất ưu đãi giảm phí dịch vụ hoặc tặng voucher."
-            color = "#F57C00"        # Màu cam tinh tế
-            bg_color = "#FFF3E0"     # Nền cam nhạt
+            risk_level = "Trung bình (Medium Risk)"
+            prediction_text = "Chú ý — Khách hàng bắt đầu giảm tương tác"
+            recommendation = "Hệ thống tự động điều phối dữ liệu về chi nhánh quản lý. Nhân viên RM cần chủ động liên hệ tặng gói miễn phí chuyển khoản trọn đời hoặc voucher quà tặng để làm mới mối liên kết."
+            brand_color = "#FF9500" # Cam sang trọng
+            bg_badge = "#FFF2E0"
         else:
-            risk_level = "CAO (High Risk)"
-            prediction_text = "🚨 Khách hàng có nguy cơ rời bỏ"
-            recommendation = "Cần kích hoạt quy trình ứng phó khẩn cấp: Chuyển dữ liệu sang trung tâm xử lý dữ liệu và liên hệ trực tiếp trong vòng 24h để thực hiện các đặc quyền giữ chân tối đa."
-            color = "#C62828"        # Màu đỏ sẫm cảnh báo rủi ro
-            bg_color = "#FFEBEE"     # Nền đỏ nhạt
+            risk_level = "Cao (High Risk)"
+            prediction_text = "Cảnh báo đỏ — Nguy cơ rời bỏ rất nghiêm trọng"
+            recommendation = "🚨 Kích hoạt kịch bản giải cứu khẩn cấp. Lãnh đạo phòng dịch vụ khách hàng trực tiếp thẩm định, đưa ra chính sách đặc quyền miễn giảm toàn bộ phí dịch vụ hoặc áp dụng biên độ lãi suất đặc cách."
+            brand_color = "#FF3B30" # Đỏ tinh tế
+            bg_badge = "#FFEBEA"
 
-        # Đầu ra đồ họa dạng Hộp Card đổ bóng, bo tròn viền chuẩn Apple UI
+        # Khối hiển thị tối giản với đường viền siêu mảnh và đổ bóng mờ mịn màng
         st.markdown(f"""
-        <div style="background-color: white; padding: 28px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #EAF2F8; margin-top: 10px;">
+        <div style="background-color: #FFFFFF; padding: 30px; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.04); border: 1px solid #E2E8F0; margin-top: 5px;">
             
-            <p style="font-size: 13px; color: #64748B; margin-bottom: 3px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">RISK SCORE (Tỷ lệ rủi ro)</p>
-            <h1 style="color: {color}; margin-top: 0; font-size: 56px; font-weight: 800; line-height: 1;">{risk_percent}%</h1>
+            <span style="font-size: 11px; color: #94A3B8; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">XÁC SUẤT RỦI RO CHI TIẾT</span>
+            <h1 style="color: {brand_color}; margin: 5px 0 15px 0; font-size: 60px; font-weight: 700; letter-spacing: -1.5px; line-height: 1;">{risk_percent}%</h1>
             
-            <div style="display: inline-block; background-color: {bg_color}; padding: 6px 16px; border-radius: 20px; margin-top: 10px; margin-bottom: 20px;">
-                <span style="font-size: 13px; color: {color}; font-weight: 700;">● Mức độ: {risk_level}</span>
+            <div style="display: inline-block; background-color: {bg_badge}; padding: 6px 14px; border-radius: 8px; margin-bottom: 25px;">
+                <span style="font-size: 13px; color: {brand_color}; font-weight: 600;">● Phân nhóm: {risk_level}</span>
             </div>
             
-            <h3 style="color: #1E293B; font-weight: 700; margin-top: 5px; font-size: 18px;">
+            <div style="font-size: 16px; font-weight: 700; color: #1E293B; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #F1F5F9;">
                 {prediction_text}
-            </h3>
-            
-            <div style="background-color: {bg_color}25; border-left: 5px solid {color}; padding: 20px; border-radius: 8px; margin-top: 25px; border-top: 1px solid {color}10; border-right: 1px solid {color}10; border-bottom: 1px solid {color}10;">
-                <div style="display: flex; align-items: center; gap: 8px; color: {color}; font-weight: 700; font-size: 15px;">
-                    <span>🎯</span> Khuyến nghị hành động chủ động:
-                </div>
-                <p style="margin-top: 10px; color: #475569; font-size: 14px; line-height: 1.6; font-weight: 500; margin-bottom: 0;">
-                    {recommendation}
-                </p>
             </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-    else:
-        # Trạng thái tĩnh khi người dùng mở trang web lên và chưa nhấn nút dự đoán
-        st.info("👋 Hệ thống đang sẵn sàng. Vui lòng nhập hoặc điều chỉnh các thông tin khách hàng ở bảng bên trái, sau đó nhấn nút 'CHẠY TEST CASE MÔ HÌNH' để kiểm tra kết quả phân tách rủi ro.")
+            
+            <div style="background-color: #F8FAFC; border-left: 4px solid {brand_color}; padding: 20px; border-radius: 0 12px 12px 0;">
+                <div style="color: #0F172A; font-weight: 700; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                    <span>🎯</span> PHƯƠNG ÁN XỬ LÝ ĐỀ XUẤT:
+                </div>
+                <p style
