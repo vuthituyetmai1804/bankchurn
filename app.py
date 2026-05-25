@@ -69,38 +69,31 @@ st.markdown("""
 
 st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 
+# HEADER HOÀN CHỈNH
 # =========================================================
-# UI HEADER
-# =========================================================
-# Cấu trúc 3 cột
-col_logo_l, col_logo_m, col_logo_r = st.columns([1, 1, 1]) 
-
-# Thêm CSS để căn giữa nội dung trong cột col_logo_m
+# 1. Logo căn giữa tuyệt đối
 st.markdown("""
-<style>
-    [data-testid="column"]:nth-of-type(2) {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-</style>
+    <div style="display: flex; justify-content: center; margin-top: 10px; margin-bottom: 20px;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg" width="250" style="display: block;">
+    </div>
 """, unsafe_allow_html=True)
 
-with col_logo_m:
-    # Bây giờ bạn chỉnh width thoải mái, nó sẽ luôn nằm giữa cột
-    st.image("https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg", width=250)
-    
-st.markdown("""  
-<div style="text-align: center; margin-bottom: 30px;">
-    <h2 style="color: #007353; font-weight: 800; margin-bottom: 5px;">🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</h2>
-    <p style="font-size: 17px; color: #555; font-style: italic; font-weight: 300;">
-        Giải pháp phân tích hành vi khách hàng, hỗ trợ chiến lược giữ chân chủ động tại BIDV
-    </p>
-</div>
+# 2. Tiêu đề và mô tả
+st.markdown("""
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h1 style="color: #007353; font-weight: 800; margin-bottom: 10px; font-size: 36px;">
+            🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ
+        </h1>
+        <p style="font-size: 18px; color: #444; font-style: italic; font-weight: 300;">
+            Giải pháp phân tích hành vi khách hàng, hỗ trợ chiến lược giữ chân chủ động tại BIDV
+        </p>
+    </div>
 """, unsafe_allow_html=True)
+
+# Gạch phân cách mỏng để tách biệt header với phần body
+st.markdown("---")
 
 col1, col2, col3 = st.columns([1, 1, 1.2])
-
 with col1:
     st.markdown("##### 📋 Thông tin cơ bản")
     age = st.slider("Tuổi", 20, 80, 35)
