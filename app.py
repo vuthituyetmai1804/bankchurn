@@ -108,7 +108,7 @@ with left_col:
     st.markdown("<br>", unsafe_allow_html=True)
     predict_btn = st.button("🔍 CHẠY PHÂN TÍCH MÔ HÌNH")
 
-# --- CỘT PHẢI: KHU VỰC HIỂN THỊ KẾT QUẢ ĐẲNG CẤP ---
+# --- CỘT PHẢI: KHU VỰC HIỂN THỊ KẾT QUẢ ---
 with right_col:
     st.caption("📊 KẾT QUẢ ĐÁNH GIÁ TỪ HỆ THỐNG")
     
@@ -128,25 +128,24 @@ with right_col:
             risk_level = "Thấp (Low Risk)"
             prediction_text = "Tối ưu — Khách hàng có xu hướng Gắn bó lâu dài"
             recommendation = "Duy trì tần suất chăm sóc tự động qua app. Đề xuất các sản phẩm tích lũy chéo hoặc gói vay ưu đãi kỳ hạn dài để tối đa hóa giá trị vòng đời khách hàng."
-            brand_color = "#0A84FF" # Xanh mượt Apple
+            brand_color = "#0A84FF" 
             bg_badge = "#E5F2FF"
         elif risk_percent <= 70:
             risk_level = "Trung bình (Medium Risk)"
             prediction_text = "Chú ý — Khách hàng bắt đầu giảm tương tác"
             recommendation = "Hệ thống tự động điều phối dữ liệu về chi nhánh quản lý. Nhân viên RM cần chủ động liên hệ tặng gói miễn phí chuyển khoản trọn đời hoặc voucher quà tặng để làm mới mối liên kết."
-            brand_color = "#FF9500" # Cam sang trọng
+            brand_color = "#FF9500" 
             bg_badge = "#FFF2E0"
         else:
             risk_level = "Cao (High Risk)"
             prediction_text = "Cảnh báo đỏ — Nguy cơ rời bỏ rất nghiêm trọng"
             recommendation = "🚨 Kích hoạt kịch bản giải cứu khẩn cấp. Lãnh đạo phòng dịch vụ khách hàng trực tiếp thẩm định, đưa ra chính sách đặc quyền miễn giảm toàn bộ phí dịch vụ hoặc áp dụng biên độ lãi suất đặc cách."
-            brand_color = "#FF3B30" # Đỏ tinh tế
+            brand_color = "#FF3B30" 
             bg_badge = "#FFEBEA"
 
-        # Khối hiển thị tối giản với đường viền siêu mảnh và đổ bóng mờ mịn màng
-        st.markdown(f"""
+        # Giải pháp an toàn: Gom HTML thành một biến chuỗi phẳng để tránh lỗi cú pháp thụt lề đầu dòng
+        html_layout = f"""
         <div style="background-color: #FFFFFF; padding: 30px; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.04); border: 1px solid #E2E8F0; margin-top: 5px;">
-            
             <span style="font-size: 11px; color: #94A3B8; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">XÁC SUẤT RỦI RO CHI TIẾT</span>
             <h1 style="color: {brand_color}; margin: 5px 0 15px 0; font-size: 60px; font-weight: 700; letter-spacing: -1.5px; line-height: 1;">{risk_percent}%</h1>
             
@@ -162,4 +161,14 @@ with right_col:
                 <div style="color: #0F172A; font-weight: 700; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
                     <span>🎯</span> PHƯƠNG ÁN XỬ LÝ ĐỀ XUẤT:
                 </div>
-                <p style
+                <p style="color: #475569; font-size: 13.5px; line-height: 1.6; font-weight: 500; margin: 0;">
+                    {recommendation}
+                </p>
+            </div>
+        </div>
+        """
+        # Đẩy biến chuỗi vào hàm xuất
+        st.markdown(html_layout, unsafe_allow_html=True)
+        
+    else:
+        st.info("👋 Vui lòng điều chỉnh các thông số tài chính của khách hàng ở cột bên trái và bấm nút 'CHẠY PHÂN TÍCH MÔ HÌNH' để xem kết quả đánh giá.")
