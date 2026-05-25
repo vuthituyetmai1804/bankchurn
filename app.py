@@ -66,7 +66,7 @@ with col3:
         risk_score = model.predict_proba(input_data)[0][1]
         risk_percent = round(risk_score * 100, 2)
         
-             if risk_percent < 30:
+        if risk_percent < 30:
             risk_level = "🟢 LOW RISK"
             prediction_text = "✅ Khách hàng có khả năng tiếp tục sử dụng dịch vụ"
             recommendation = "✅ Duy trì mối quan hệ tốt và tiếp tục chăm sóc định kỳ."
