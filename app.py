@@ -152,7 +152,7 @@ with col3:
 
         # 1. METRICS (SCORE & LEVEL)
         c1, c2 = st.columns(2)
-        c1.metric("SCORE", f"{risk_percent}%")
+        c1.metric("**SCORE**", f"{risk_percent}%")
         # Dùng markdown để chữ Level nhỏ gọn, không bị vỡ
         c2.markdown(f"**LEVEL**<br><span style='color:{color}; font-size:16px; font-weight:bold;'>{risk_level}</span>", unsafe_allow_html=True)
         
