@@ -295,15 +295,12 @@ FLOATING BLUR CIRCLES
 # =========================================================
 st.markdown("""
 <div class="header-box">
-
     <div class="header-title">
         🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ
     </div>
-
     <div class="header-sub">
-        AI Banking Analytics • BIDV Churn Prediction 2026
+        Ứng dụng Mô hình Cây quyết định trong Quản trị Rủi ro Ngân hàng BIDV
     </div>
-
 </div>
 """, unsafe_allow_html=True)
 
