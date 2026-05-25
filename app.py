@@ -33,37 +33,44 @@ st.markdown("""
     background-color: rgba(255, 198, 47, 0.4); 
 }
 
-/* 2. Lớp sóng uốn lượn phía dưới cùng (Màu xanh BIDV) */
+/* 2. Lớp sóng uốn lượn sợi trắng (Sử dụng SVG để tạo dải sóng mảnh) */
 .wave-container {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 200px;
-    z-index: -999;
+    height: 300px;
+    z-index: 0;
     pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23006B68' fill-opacity='0.5' d='M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,149.3C672,149,768,203,864,218.7C960,235,1056,213,1152,192C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
-    background-size: cover;
+    opacity: 0.6; /* Độ trong suốt của sợi sóng */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='none' stroke='white' stroke-width='1.5' d='M0,160C240,320,480,0,720,160C960,320,1200,0,1440,160'/%3E%3Cpath fill='none' stroke='white' stroke-width='1' d='M0,200C240,360,480,40,720,200C960,360,1200,40,1440,200'/%3E%3Cpath fill='none' stroke='white' stroke-width='0.8' d='M0,120C240,280,480,-40,720,120C960,280,1200,-40,1440,120'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-position: bottom;
 }
 
-/* 3. Container nội dung chính (Màu trắng để dễ đọc) */
+/* 3. Container nội dung chính */
 .block-container {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 30px;
     padding: 3rem !important;
     box-shadow: 0px 10px 30px rgba(0,0,0,0.1);
+    z-index: 1;
+    position: relative;
 }
 
-/* 4. Header màu xanh BIDV */
+/* 4. Header màu Xanh BIDV */
 .header-box {
     background: #006B68;
     padding: 40px;
     border-radius: 30px;
     text-align: center;
+    margin-bottom: 30px;
     color: white;
 }
+.header-title { font-size: 50px; font-weight: 900; color: white; }
+.header-sub { font-size: 18px; color: rgba(255,255,255,0.9); }
 
-/* 5. Nút bấm màu xanh BIDV */
+/* 5. Nút bấm màu Xanh BIDV */
 .stButton > button {
     background-color: #006B68 !important;
     color: white !important;
@@ -73,14 +80,13 @@ st.markdown("""
     border: none;
 }
 
-/* 6. Các tiêu đề và điểm nhấn màu xanh BIDV */
-h2, .stMetricValue {
-    color: #006B68 !important;
-}
+/* 6. Màu nhấn Xanh BIDV */
+h2 { color: #006B68 !important; }
+[data-testid="stMetricValue"] { color: #006B68 !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# Đừng quên dòng này để kích hoạt lớp sóng
+# Kích hoạt lớp sóng
 st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 # =========================================================
 # HEADER
