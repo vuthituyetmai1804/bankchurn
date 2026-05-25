@@ -25,27 +25,21 @@ st.set_page_config(
 )
 # =========================================================
 # CUSTOM CSS 
-# =========================================================
+import streamlit as st
+
 st.markdown("""
 <style>
-/* 1. Thiết lập chung cho nền trang */
-.stApp { background-color: #f4f6f9; }
-
-/* 2. Lớp sóng uốn lượn cố định (Wave Container) - Màu Vàng hoa mai #FFCC00 */
-.wave-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 200px;
-    z-index: 0;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23FFCC00' fill-opacity='0.4' d='M0,192L48,176C96,160,192,128,288,133.3C384,139,480,181,576,197.3C672,213,768,203,864,170.7C960,139,1056,85,1152,80C1248,75,1344,117,1392,138.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+/* 1. Thiết lập nền trang với nhiều sợi sóng chéo */
+.stApp {
+    background-color: #f4f6f9;
+    background-image: 
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 800'%3E%3Cpath fill='none' stroke='%23FFCC00' stroke-width='1' stroke-opacity='0.2' d='M-100,800 C200,600 400,200 800,300 C1200,400 1400,0 1600,-100'/%3E%3Cpath fill='none' stroke='%23FFCC00' stroke-width='1' stroke-opacity='0.2' d='M-100,850 C200,650 400,250 800,350 C1200,450 1400,50 1600,-50'/%3E%3Cpath fill='none' stroke='%23FFCC00' stroke-width='1' stroke-opacity='0.2' d='M-100,900 C200,700 400,300 800,400 C1200,500 1400,100 1600,0'/%3E%3Cpath fill='none' stroke='%23FFCC00' stroke-width='1' stroke-opacity='0.2' d='M-100,950 C200,750 400,350 800,450 C1200,550 1400,150 1600,50'/%3E%3C/svg%3E");
+    background-attachment: fixed;
     background-size: cover;
-    background-repeat: no-repeat;
+    background-position: center;
 }
 
-/* 3. Container nội dung chính */
+/* 2. Container nội dung chính */
 .block-container {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 30px;
@@ -55,7 +49,7 @@ st.markdown("""
     position: relative;
 }
 
-/* 4. Header chuyên nghiệp - Màu Xanh ngọc lục bảo #007353 */
+/* 3. Header chuyên nghiệp - Màu Xanh ngọc lục bảo #007353 */
 .header-box {
     background: #007353;
     padding: 40px;
@@ -68,7 +62,7 @@ st.markdown("""
 .header-title { font-size: 50px; font-weight: 900; margin-bottom: 10px; color: white; }
 .header-sub { font-size: 18px; color: rgba(255,255,255,0.9); }
 
-/* 5. Nút bấm bo tròn - Màu Xanh ngọc lục bảo #007353 */
+/* 4. Nút bấm bo tròn - Màu Xanh ngọc lục bảo #007353 */
 .stButton > button {
     width: 100%;
     height: 65px;
@@ -82,7 +76,7 @@ st.markdown("""
 }
 .stButton > button:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
-/* 6. Khung kết quả */
+/* 5. Khung kết quả */
 .result-box, .recommend-box {
     background-color: white;
     padding: 25px;
@@ -93,12 +87,10 @@ st.markdown("""
 }
 h2 { color: #007353 !important; }
 
-/* 7. Metric */
+/* 6. Metric */
 [data-testid="stMetricValue"] { color: #007353; }
 </style>
 """, unsafe_allow_html=True)
-
-st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 # =========================================================
 # HEADER
 # =========================================================
