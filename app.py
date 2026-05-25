@@ -2,12 +2,6 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# =====================================================
-# LOAD
-# =====================================================
-model = joblib.load("bidv_churn_model.pkl")
-
-scaler = joblib.load("scaler_bidv_model.pkl")import streamlit as st
 # =========================================================
 # PAGE CONFIG
 # =========================================================
@@ -16,6 +10,13 @@ st.set_page_config(
     page_icon="🏦",
     layout="wide"
 )
+
+# =========================================================
+# LOAD MODEL & SCALER
+# =========================================================
+model = joblib.load("bidv_churn_model.pkl")
+
+scaler = joblib.load("scaler_bidv_model.pkl")
 
 # =========================================================
 # CUSTOM CSS
@@ -77,6 +78,14 @@ st.markdown("""
     font-weight: 500;
 }
 
+.metric-box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.05);
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -85,6 +94,7 @@ st.markdown("""
 # =========================================================
 st.markdown("""
 <div class="header-box">
+
     <div class="header-title">
         🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ
     </div>
@@ -92,6 +102,7 @@ st.markdown("""
     <div class="header-sub">
         AI-Powered Bank Customer Churn Prediction
     </div>
+
 </div>
 """, unsafe_allow_html=True)
 
@@ -188,14 +199,19 @@ if predict_btn:
     }])
 
     # =====================================================
-    # PREDICT RISK SCORE
+    # SCALE INPUT
     # =====================================================
-    risk_score = model.predict_proba(input_df)[0][1]
+    input_scaled = scaler.transform(input_df)
+
+    # =====================================================
+    # PREDICT PROBABILITY
+    # =====================================================
+    risk_score = model.predict_proba(input_scaled)[0][1]
 
     risk_percent = round(risk_score * 100, 2)
 
     # =====================================================
-    # RISK LEVEL & RECOMMENDATION
+    # RISK LEVEL
     # =====================================================
     if risk_percent < 30:
 
@@ -226,3 +242,69 @@ if predict_btn:
         recommendation = "🚨 Cần liên hệ khẩn cấp trong 24h để giữ chân khách hàng."
 
         color = "red"
+
+    # =====================================================
+    # OUTPUT
+    # =====================================================
+    st.markdown("---")
+
+    st.markdown("# 📊 KẾT QUẢ PHÂN TÍCH")
+
+    # =====================================================
+    # METRICS
+    # =====================================================
+    colA, colB, colC = st.columns(3)
+
+    with colA:
+        st.metric(
+            label="RISK SCORE",
+            value=f"{risk_percent}%"
+        )
+
+    with colB:
+        st.metric(
+            label="RISK LEVEL",
+            value=risk_level
+        )
+
+    with colC:
+        st.metric(
+            label="PREDICTION",
+            value="CHURN" if risk_percent >= 50 else "STAY"
+        )
+
+    # =====================================================
+    # PROGRESS BAR
+    # =====================================================
+    st.progress(int(risk_percent))
+
+    # =====================================================
+    # PREDICTION RESULT
+    # =====================================================
+    st.markdown(f"""
+    <div class="result-box">
+
+        <h2 style="color:{color};">
+            {prediction_text}
+        </h2>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+    # =====================================================
+    # RECOMMENDATION
+    # =====================================================
+    st.markdown(f"""
+    <div class="recommend-box"
+    style="
+        background-color:white;
+        border-left:8px solid {color};
+        margin-top:20px;
+    ">
+
+    <h3>🎯 Recommendation</h3>
+
+    <p>{recommendation}</p>
+
+    </div>
+    """, unsafe_allow_html=True)
