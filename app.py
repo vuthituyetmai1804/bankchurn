@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import joblib
-import time
-import plotly.graph_objects as go
 
 # =========================================================
 # PAGE CONFIG
@@ -23,27 +21,62 @@ model = joblib.load("bidv_churn_modeltuning.pkl")
 # =========================================================
 st.markdown("""
 <style>
-    /* ... (Giữ nguyên các style background, header, button của bạn) ... */
-
-    /* Thêm các class bị thiếu để render đúng */
-    .ai-result-card { 
-        background: #072c2b; 
-        border-radius: 28px; 
-        padding: 40px; 
-        color: white; 
-    }
-    .ai-circle { 
-        width: 200px; height: 200px; border: 6px solid; border-radius: 50%; 
-        display: flex; align-items: center; justify-content: center; margin: 20px auto; 
-    }
-    .ai-percent { font-size: 50px; font-weight: bold; }
-    .ai-risk-title { text-align: center; font-size: 30px; font-weight: bold; margin: 20px 0; }
-    .ai-sub { text-align: center; color: #aaa; margin-bottom: 20px; }
-    .ai-mini-card { background: #1e1e1e; padding: 20px; border-radius: 15px; border-left: 5px solid #00ffae; }
-    .ai-mini-title { color: #888; font-size: 16px; }
-    .ai-mini-content { color: white; font-size: 18px; margin-top: 10px; }
+.main {
+    background-color: #f4f6f9;
+}
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+.header-box {
+    background: linear-gradient(90deg, #005bea, #00c6fb);
+    padding: 35px;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+.header-title {
+    color: white;
+    font-size: 42px;
+    font-weight: bold;
+}
+.header-sub {
+    color: white;
+    font-size: 18px;
+}
+.stButton > button {
+    width: 100%;
+    height: 65px;
+    background-color: #005bea;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 15px;
+    border: none;
+}
+.result-box {
+    background-color: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.08);
+    margin-top: 20px;
+}
+.recommend-box {
+    padding: 20px;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: 500;
+}
+.metric-box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.05);
+}
 </style>
 """, unsafe_allow_html=True)
+
 # =========================================================
 # HEADER
 # =========================================================
@@ -61,11 +94,7 @@ st.markdown("""
 # =========================================================
 # INPUT SECTION
 # =========================================================
-st.markdown("""
-<div class="modern-card">
-<h2>📋 Thông tin khách hàng</h2>
-</div>
-""", unsafe_allow_html=True)
+st.markdown("## 📋 Nhập thông tin khách hàng")
 
 col1, col2 = st.columns(2)
 
@@ -130,6 +159,7 @@ predict_btn = st.button("🔍 DỰ ĐOÁN NGAY")
 # PREDICTION LOGIC
 # =========================================================
 if predict_btn:
+
     # =====================================================
     # 1. TẠO DATAFRAME VỚI ĐÚNG 7 CỘT THEO ĐÚNG THỨ TỰ YÊU CẦU
     # =====================================================
@@ -177,43 +207,62 @@ if predict_btn:
         color = "red"
 
     # =====================================================
+    # OUTPUT GRAPHICS
     # =====================================================
-    # AI RESULT LAYOUT
-    # =====================================================
+    st.markdown("---")
+    st.markdown("# 📊 KẾT QUẢ PHÂN TÍCH")
 
-    left_panel, right_panel = st.columns([1.15, 0.85])
+    # =====================================================
+    # METRICS
+    # =====================================================
+    colA, colB, colC = st.columns(3)
+
+    with colA:
+        st.metric(
+            label="RISK SCORE",
+            value=f"{risk_percent}%"
+        )
+
+    with colB:
+        st.metric(
+            label="RISK LEVEL",
+            value=risk_level
+        )
+
+    with colC:
+        st.metric(
+            label="PREDICTION",
+            value="CHURN" if risk_percent >= 50 else "STAY"
+        )
 
     # =====================================================
-    # LEFT PANEL
+    # PROGRESS BAR
     # =====================================================
-    
-    with left_panel:
-    
-        st.markdown("""
-        <div class="custom-card">
-        <h2>📋 Thông tin khách hàng</h2>
-        <p style="color:#5f6c7b;">
-        AI Banking Analytics • BIDV Churn Prediction
-        </p>
-        </div>
-        """, unsafe_allow_html=True)
-    
+    st.progress(int(risk_percent))
+
     # =====================================================
-    # RIGHT PANEL
+    # PREDICTION RESULT BOX
     # =====================================================
-    with right_panel:    
-        html_code = f"""
-        <div class="ai-result-card">
-            <h2 style="color:white;text-align:center;">KẾT QUẢ DỰ ĐOÁN</h2>
-            <div class="ai-circle" style="border-color:{glow}; box-shadow:0 0 20px {glow};">
-                <div class="ai-percent">{risk_percent}%</div>
-            </div>
-            <div class="ai-risk-title">{risk_name}</div>
-            <div class="ai-sub">Khách hàng có khả năng rời bỏ dịch vụ</div>
-            <div class="ai-mini-card">
-                <div class="ai-mini-title">🎯 Khuyến nghị hành động</div>
-                <div class="ai-mini-content">{recommendation}</div>
-            </div>
-        </div>
-        """
-        st.markdown(html_code, unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="result-box">
+        <h2 style="color:{color}; text-align: center; margin: 0;">
+            {prediction_text}
+        </h2>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # =====================================================
+    # RECOMMENDATION BOX
+    # =====================================================
+    st.markdown(f"""
+    <div class="recommend-box"
+    style="
+        background-color:white;
+        border-left:8px solid {color};
+        margin-top:20px;
+        box-shadow: 0px 0px 15px rgba(0,0,0,0.08);
+    ">
+    <h3 style="margin-top: 0;">🎯 Khuyến nghị hành động:</h3>
+    <p style="margin-bottom: 0;">{recommendation}</p>
+    </div>
+    """, unsafe_allow_html=True)
