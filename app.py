@@ -2,6 +2,19 @@ import streamlit as st
 import pandas as pd
 import joblib
 
+# Sử dụng decorator để cache model
+@st.cache_resource
+def load_model():
+    # Đảm bảo file .pkl nằm cùng thư mục với app.py
+    return joblib.load("bidv_churn_modeltuning.pkl")
+
+# Gọi hàm load model
+try:
+    model = load_model()
+except Exception as e:
+    st.error(f"⚠️ Không thể tải model: {e}")
+    st.stop()
+
 # =========================================================
 # PAGE CONFIG
 # =========================================================
@@ -10,11 +23,6 @@ st.set_page_config(
     page_icon="🏦",
     layout="wide"
 )
-
-# =========================================================
-# LOAD MODEL
-# =========================================================
-# model = joblib.load("bidv_churn_modeltuning.pkl") # Bỏ comment khi chạy thật
 
 # =========================================================
 # CUSTOM CSS WITH ANIMATED BACKGROUND & NEW COLOR
