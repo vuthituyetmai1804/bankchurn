@@ -3,8 +3,6 @@ import pandas as pd
 import joblib
 import numpy as np
 
-
-
 st.set_page_config(page_title="BIDV Churn Predict", page_icon="🔍", layout="wide")
 
 # CSS đẹp
@@ -28,9 +26,13 @@ def load_model():
     try:
         model = joblib.load('bidv_churnn_model.pkl')
         scaler = joblib.load('scaler_bidv_model.pkl')
+        st.sidebar.success("✅ Model & Scaler loaded successfully!")
         return model, scaler
-    except:
-        st.error("❌ Chưa tìm thấy file model. Vui lòng upload `bidv_churnn_model.pkl` và `scaler_bidv_model.pkl`")
+    except FileNotFoundError:
+        st.error("❌ Không tìm thấy file model. Vui lòng upload `bidv_churnn_model.pkl` và `scaler_bidv_model.pkl`")
+        return None, None
+    except Exception as e:
+        st.error(f"❌ Lỗi load model: {e}")
         return None, None
 
 model, scaler = load_model()
@@ -65,64 +67,70 @@ with col4:
 
 # ==================== DỰ ĐOÁN ====================
 if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
-    # Chuẩn bị dữ liệu
-    input_dict = {
-        'credit_sco': credit_score,
-        'age': age,
-        'balance': balance,
-        'monthly_ir': monthly_income,
-        'tenure_ye': tenure,
-        'nums_card': nums_card,
-        'nums_service': nums_service,
-        'engagement_score': engagement_score,
-        'active_member': 1 if active_member == "Có" else 0,
-        'married': 1,
-        'last_transaction_month': 3,
-    }
-
-    input_df = pd.DataFrame([input_dict])
-
-    # Scale
-    cols_to_scale = ['credit_sco', 'age', 'balance', 'monthly_ir', 'tenure_ye',
-                    'nums_card', 'nums_service', 'engagement_score']
-
-    input_scaled = input_df.copy()
-    input_scaled[cols_to_scale] = scaler.transform(input_scaled[cols_to_scale])
-
-    # Predict
-    proba = model.predict_proba(input_scaled)[0][1]
-    risk_score = proba * 100
-
-    # Hiển thị kết quả
-    st.success("**DỰ ĐOÁN HOÀN TẤT**")
-
-    col_res1, col_res2 = st.columns([1, 2])
-
-    with col_res1:
-        st.metric("**RISK SCORE**", f"{risk_score:.1f}%")
-
-    with col_res2:
-        if risk_score < 30:
-            level = "🟢 LOW RISK"
-        elif risk_score <= 70:
-            level = "🟡 MEDIUM RISK"
+    try:
+        # Chuẩn bị dữ liệu - ĐẦY ĐỦ CÁC CỘT SCALER CẦN
+        input_dict = {
+            'credit_sco': [credit_score],
+            'age': [age],
+            'balance': [balance],
+            'monthly_ir': [monthly_income],
+            'tenure_ye': [tenure],
+            'nums_card': [nums_card],
+            'nums_service': [nums_service],
+            'engagement_score': [engagement_score],
+            'active_member': [1 if active_member == "Có" else 0],
+            'married': [1],
+            'last_transaction_month': [3],
+            'risk_score': [0.15]  # Giá trị mặc định, scaler cần cột này
+        }
+        
+        input_df = pd.DataFrame(input_dict)
+        
+        # Danh sách cột cần scale (phải khớp chính xác với lúc train)
+        cols_to_scale = ['credit_sco', 'age', 'balance', 'monthly_ir', 'nums_card', 
+                        'nums_service', 'engagement_score', 'tenure_ye', 'risk_score']
+        
+        # Scale dữ liệu
+        input_scaled = input_df.copy()
+        input_scaled[cols_to_scale] = scaler.transform(input_scaled[cols_to_scale])
+        
+        # Dự đoán
+        proba = model.predict_proba(input_scaled)[0][1]
+        risk_score = proba * 100
+        
+        # Hiển thị kết quả
+        st.success("**DỰ ĐOÁN HOÀN TẤT**")
+        
+        col_res1, col_res2 = st.columns([1, 2])
+        with col_res1:
+            st.metric("**RISK SCORE**", f"{risk_score:.1f}%")
+        
+        with col_res2:
+            if risk_score < 30:
+                level = "🟢 LOW RISK"
+            elif risk_score <= 70:
+                level = "🟡 MEDIUM RISK"
+            else:
+                level = "🔴 HIGH RISK"
+            st.markdown(f"### {level}")
+        
+        if risk_score >= 50:
+            st.error("⚠️ **Khách hàng có nguy cơ rời bỏ**")
         else:
-            level = "🔴 HIGH RISK"
-        st.markdown(f"### {level}")
-
-    if risk_score >= 50:
-        st.error("⚠️ **Khách hàng có nguy cơ rời bỏ**")
-    else:
-        st.success("✅ **Khách hàng có khả năng tiếp tục**")
-
-    # Khuyến nghị
-    st.markdown("### 💡 Khuyến nghị hành động")
-    if risk_score >= 70:
-        st.error("🚨 **Liên hệ khẩn cấp trong 24h** - Ưu đãi đặc biệt, gọi tư vấn cá nhân hóa")
-    elif risk_score >= 40:
-        st.warning("⚠️ **Chăm sóc chủ động**: Gọi điện, tặng voucher, nâng cấp dịch vụ")
-    else:
-        st.success("✅ Duy trì mối quan hệ tốt, theo dõi định kỳ")
+            st.success("✅ **Khách hàng có khả năng tiếp tục**")
+        
+        # Khuyến nghị
+        st.markdown("### 💡 Khuyến nghị hành động")
+        if risk_score >= 70:
+            st.error("🚨 **Liên hệ khẩn cấp trong 24h** - Ưu đãi đặc biệt, gọi tư vấn cá nhân hóa")
+        elif risk_score >= 40:
+            st.warning("⚠️ **Chăm sóc chủ động**: Gọi điện, tặng voucher, nâng cấp dịch vụ")
+        else:
+            st.success("✅ Duy trì mối quan hệ tốt, theo dõi định kỳ")
+            
+    except Exception as e:
+        st.error(f"❌ Lỗi khi dự đoán: {str(e)}")
+        st.info("Vui lòng kiểm tra file scaler và model.")
 
 st.markdown("---")
 st.caption("BIDV Churn Prediction System • Powered by Streamlit")
