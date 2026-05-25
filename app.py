@@ -40,23 +40,50 @@ input_data = pd.DataFrame([{
     'active_member': active_member
 }])
 
-# ==================== PREDICT ====================
+# ==================== PHẦN DỰ ĐOÁN ====================
 if st.button("🔍 Dự đoán khả năng rời bỏ", type="primary"):
+    
+    # Định nghĩa CHÍNH XÁC danh sách cột theo thứ tự scaler được fit
     cols_to_scale = ['risk_score', 'monthly_ir', 'credit_sco', 'nums_service', 
                      'engagement_score', 'balance', 'age']
     
-    # Scale
-    input_scaled = scaler.transform(input_data[cols_to_scale])
-    input_final = input_data.copy()
-    input_final[cols_to_scale] = input_scaled
+    # Tạo DataFrame với đúng tên cột và thứ tự
+    input_dict = {
+        'risk_score': risk_score,
+        'monthly_ir': monthly_ir,
+        'credit_sco': credit_sco,
+        'nums_service': nums_service,
+        'engagement_score': engagement_score,
+        'balance': balance,
+        'age': age,
+        'active_member': active_member
+    }
     
-    # Predict
-    prediction = model.predict(input_final)[0]
-    probability = model.predict_proba(input_final)[0][1]   # Xác suất churn
-
-    if prediction == 1:
-        st.error(f"**KHÁCH HÀNG CÓ NGUY CƠ RỜI BỎ CAO** ({probability:.1%})")
-    else:
-        st.success(f"**KHÁCH HÀNG CÓ XÁC SUẤT Ở LẠI TỐT** ({1-probability:.1%})")
+    input_data = pd.DataFrame([input_dict])
+    
+    # Debug (bạn có thể comment sau khi chạy ổn)
+    st.write("**Debug - Cột input:**", input_data.columns.tolist())
+    
+    # Scale chỉ các cột cần scale
+    try:
+        input_scaled = scaler.transform(input_data[cols_to_scale])
         
-    st.info(f"Xác suất churn: **{probability:.1%}**")
+        # Gán lại giá trị đã scale
+        input_final = input_data.copy()
+        input_final[cols_to_scale] = input_scaled
+        
+        # Predict
+        prediction = model.predict(input_final)[0]
+        probability = model.predict_proba(input_final)[0][1]
+        
+        if prediction == 1:
+            st.error(f"**KHÁCH HÀNG CÓ NGUY CƠ RỜI BỎ CAO** ({probability:.1%})")
+        else:
+            st.success(f"**KHÁCH HÀNG CÓ XÁC SUẤT Ở LẠI TỐT** ({(1-probability):.1%})")
+            
+        st.info(f"Xác suất churn: **{probability:.1%}**")
+        
+    except Exception as e:
+        st.error(f"Lỗi khi dự đoán: {str(e)}")
+        st.write("Debug - Input DataFrame:")
+        st.write(input_data)
