@@ -73,8 +73,8 @@ st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 # UI HEADER
 # =========================================================
 st.markdown("""
-<div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg" width="900">
+<div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg" width="600">
 </div>
 <div style="text-align: center; margin-bottom: 30px;">
     <h2 style="color: #007353; font-weight: 800; margin-bottom: 5px;">🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</h2>
