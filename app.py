@@ -1,15 +1,7 @@
-
 import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
-
-# =========================
-# LOAD MODEL
-# =========================
-
-model = joblib.load('bidv_churnn_model.pkl')
-scaler = joblib.load('scaler_bidv_model.pkl')
 
 # =========================
 # PAGE CONFIG
@@ -20,6 +12,13 @@ st.set_page_config(
     page_icon="🏦",
     layout="wide"
 )
+
+# =========================
+# LOAD MODEL
+# =========================
+
+model = joblib.load("bidv_churnn_model.pkl")
+scaler = joblib.load("scaler_bidv_model.pkl")
 
 # =========================
 # CUSTOM CSS
@@ -34,6 +33,7 @@ st.markdown("""
 
 .block-container {
     padding-top: 2rem;
+    padding-bottom: 2rem;
 }
 
 h1 {
@@ -42,23 +42,24 @@ h1 {
     font-weight: bold;
 }
 
-.stButton>button {
+.stButton > button {
     width: 100%;
     height: 60px;
-    font-size: 22px;
-    font-weight: bold;
     border-radius: 12px;
+    border: none;
     background-color: #005BAC;
     color: white;
+    font-size: 22px;
+    font-weight: bold;
 }
 
-.stButton>button:hover {
-    background-color: #004080;
+.stButton > button:hover {
+    background-color: #003f7d;
     color: white;
 }
 
-.metric-box {
-    background-color: white;
+.metric-card {
+    background: white;
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0px 2px 10px rgba(0,0,0,0.1);
@@ -76,135 +77,178 @@ st.title("🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ")
 st.markdown("---")
 
 # =========================
-# INPUT AREA
+# INPUT FORM
 # =========================
 
 col1, col2 = st.columns(2)
 
+# LEFT COLUMN
 with col1:
 
     age = st.slider(
-        "Tuổi",
-        min_value=18,
-        max_value=90,
-        value=35
+        "🎂 Tuổi",
+        18,
+        90,
+        35
     )
 
     credit_score = st.slider(
-        "Điểm tín dụng",
-        min_value=300,
-        max_value=900,
-        value=650
+        "💳 Điểm tín dụng",
+        300,
+        900,
+        650
     )
 
     balance = st.number_input(
-        "Số dư tài khoản (VND)",
+        "💰 Số dư tài khoản (VND)",
         min_value=0,
         value=50000000,
         step=1000000
     )
 
     monthly_income = st.number_input(
-        "Thu nhập hàng tháng (VND)",
+        "📈 Thu nhập hàng tháng (VND)",
         min_value=0,
         value=15000000,
         step=1000000
     )
 
+# RIGHT COLUMN
 with col2:
 
     tenure = st.slider(
-        "Số năm gắn bó",
-        min_value=0,
-        max_value=4,
-        value=2
+        "⏳ Số năm gắn bó",
+        0,
+        4,
+        2
     )
 
     active_member = st.radio(
-        "Hoạt động gần đây",
+        "📱 Hoạt động gần đây",
         ["Có", "Không"]
     )
 
     loyalty_level = st.selectbox(
-        "Hạng khách hàng",
+        "🏅 Hạng khách hàng",
         ["Bronze", "Silver", "Gold"]
     )
+
+st.markdown("")
 
 # =========================
 # BUTTON
 # =========================
 
-predict_button = st.button("🔍 DỰ ĐOÁN NGAY")
+predict_btn = st.button("🔍 DỰ ĐOÁN NGAY")
 
 # =========================
-# PREDICTION
+# PREDICT
 # =========================
 
-if predict_button:
+if predict_btn:
 
     # =========================
-    # ENCODE INPUT
+    # ALL FEATURES
     # =========================
 
-    active_member_value = 1 if active_member == "Có" else 0
-
-    loyalty_bronze = 1 if loyalty_level == "Bronze" else 0
-    loyalty_silver = 1 if loyalty_level == "Silver" else 0
+    all_columns = [
+        'credit_sco',
+        'gender',
+        'age',
+        'balance',
+        'monthly_ir',
+        'tenure_ye',
+        'married',
+        'nums_card',
+        'nums_service',
+        'active_member',
+        'last_transaction_month',
+        'customer_segment',
+        'engagement_score',
+        'loyalty_level',
+        'risk_score',
+        'risk_segment',
+        'cluster_group',
+        'occupation_Giáo viên/Giảng viên',
+        'occupation_Hưu trí',
+        'occupation_Kinh doanh/Bán hàng',
+        'occupation_Kế toán/Tài chính',
+        'occupation_Kỹ sư/Chuyên viên IT',
+        'occupation_Lao động phổ thông',
+        'occupation_Nhân viên văn phòng/Công chức',
+        'occupation_Nội trợ/Sinh viên',
+        'occupation_Quản lý/Lãnh đạo',
+        'origin_province_Bình Dương',
+        'origin_province_Cần Thơ',
+        'origin_province_Hà Nội',
+        'origin_province_Long An',
+        'origin_province_TP. Hồ Chí Minh',
+        'origin_province_Tiền Giang',
+        'origin_province_Tỉnh khác',
+        'origin_province_Đồng Nai',
+        'digital_behavior_offline'
+    ]
 
     # =========================
-    # TẠO DATAFRAME
+    # CREATE DATAFRAME
     # =========================
 
-    input_data = pd.DataFrame({
+    input_data = pd.DataFrame(
+        np.zeros((1, len(all_columns))),
+        columns=all_columns
+    )
 
-        'credit_sco': [credit_score],
-        'age': [age],
-        'balance': [balance],
-        'monthly_ir': [monthly_income],
-        'tenure_ye': [tenure],
-        'active_member': [active_member_value],
+    # =========================
+    # USER INPUT
+    # =========================
 
-        # GIÁ TRỊ GIẢ ĐỊNH
-        'married': [1],
-        'nums_card': [2],
-        'nums_service': [2],
-        'engagement_score': [50],
-        'risk_score': [0.2],
-        'cluster_group': [2],
+    input_data['credit_sco'] = credit_score
+    input_data['age'] = age
+    input_data['balance'] = balance
+    input_data['monthly_ir'] = monthly_income
+    input_data['tenure_ye'] = tenure
 
-        'customer_segment': [1],
-        'loyalty_level': [1],
+    input_data['active_member'] = 1 if active_member == "Có" else 0
 
-        'risk_segment': [1],
+    # =========================
+    # DEFAULT VALUES
+    # =========================
 
-        'gender': [1],
+    input_data['gender'] = 1
+    input_data['married'] = 1
+    input_data['nums_card'] = 2
+    input_data['nums_service'] = 2
+    input_data['last_transaction_month'] = 1000000
+    input_data['customer_segment'] = 1
+    input_data['engagement_score'] = 50
+    input_data['risk_score'] = 0.2
+    input_data['risk_segment'] = 1
+    input_data['cluster_group'] = 2
 
-        'digital_behavior_offline': [0],
+    # =========================
+    # LOYALTY LEVEL
+    # =========================
 
-        # OCCUPATION
-        'occupation_Giáo viên/Giảng viên': [0],
-        'occupation_Hưu trí': [0],
-        'occupation_Kinh doanh/Bán hàng': [0],
-        'occupation_Kế toán/Tài chính': [0],
-        'occupation_Kỹ sư/Chuyên viên IT': [0],
-        'occupation_Lao động phổ thông': [0],
-        'occupation_Nhân viên văn phòng/Công chức': [1],
-        'occupation_Nội trợ/Sinh viên': [0],
-        'occupation_Quản lý/Lãnh đạo': [0],
+    if loyalty_level == "Bronze":
+        input_data['loyalty_level'] = 0
 
-        # PROVINCE
-        'origin_province_Bình Dương': [0],
-        'origin_province_Cần Thơ': [0],
-        'origin_province_Hà Nội': [1],
-        'origin_province_Long An': [0],
-        'origin_province_TP. Hồ Chí Minh': [0],
-        'origin_province_Tiền Giang': [0],
-        'origin_province_Tỉnh khác': [0],
-        'origin_province_Đồng Nai': [0],
+    elif loyalty_level == "Silver":
+        input_data['loyalty_level'] = 1
 
-        'last_transaction_month': [1000000]
+    else:
+        input_data['loyalty_level'] = 2
 
-    })
+    # =========================
+    # DEFAULT OCCUPATION
+    # =========================
+
+    input_data['occupation_Nhân viên văn phòng/Công chức'] = 1
+
+    # =========================
+    # DEFAULT PROVINCE
+    # =========================
+
+    input_data['origin_province_Hà Nội'] = 1
 
     # =========================
     # SCALE
@@ -234,14 +278,13 @@ if predict_button:
 
     risk_percent = round(probability * 100, 2)
 
-    prediction = 1 if probability >= 0.5 else 0
+    # =========================
+    # OUTPUT
+    # =========================
 
     st.markdown("---")
 
-    # =========================
     # RISK SCORE
-    # =========================
-
     st.metric(
         label="🎯 RISK SCORE",
         value=f"{risk_percent}%"
@@ -252,23 +295,32 @@ if predict_button:
     # =========================
 
     if risk_percent < 30:
+
         st.success("🟢 LOW RISK")
 
     elif risk_percent < 70:
+
         st.warning("🟡 MEDIUM RISK")
 
     else:
+
         st.error("🔴 HIGH RISK")
 
     # =========================
     # PREDICTION
     # =========================
 
-    if prediction == 1:
-        st.error("⚠️ Khách hàng có nguy cơ rời bỏ")
+    if risk_percent >= 50:
+
+        st.error(
+            "⚠️ Khách hàng có nguy cơ rời bỏ"
+        )
 
     else:
-        st.success("✅ Khách hàng có khả năng tiếp tục sử dụng dịch vụ")
+
+        st.success(
+            "✅ Khách hàng có khả năng tiếp tục sử dụng dịch vụ"
+        )
 
     # =========================
     # RECOMMENDATION
@@ -293,3 +345,33 @@ if predict_button:
         st.success(
             "✅ Duy trì mối quan hệ tốt và tiếp tục chăm sóc định kỳ."
         )
+
+    # =========================
+    # FEATURE IMPORTANCE
+    # =========================
+
+    st.markdown("---")
+
+    st.subheader("📊 Các yếu tố ảnh hưởng")
+
+    importance_data = pd.DataFrame({
+        'Yếu tố': [
+            'Điểm tín dụng',
+            'Số dư tài khoản',
+            'Thu nhập',
+            'Mức độ hoạt động',
+            'Số năm gắn bó'
+        ],
+        'Giá trị': [
+            credit_score,
+            balance,
+            monthly_income,
+            active_member,
+            tenure
+        ]
+    })
+
+    st.dataframe(
+        importance_data,
+        use_container_width=True
+    )
