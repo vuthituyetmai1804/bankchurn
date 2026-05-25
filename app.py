@@ -1,98 +1,107 @@
 import streamlit as st
 import pandas as pd
 import joblib
-import plotly.graph_objects as go
 
-# =========================================================
-# CONFIGURATION
-# =========================================================
-st.set_page_config(page_title="BIDV Premium", layout="wide")
-
+# Cache model
 @st.cache_resource
 def load_model():
     return joblib.load("bidv_churn_modeltuning.pkl")
 
 model = load_model()
 
+# Page Config
+st.set_page_config(page_title="BIDV Churn Prediction", page_icon="🏦", layout="wide")
+
 # =========================================================
-# CLEAN & MODERN CSS (Light Theme)
+# REFINED CSS - "Premium Bank Interface"
 # =========================================================
 st.markdown("""
 <style>
-    .stApp { background-color: #f8f9fa; }
+    /* Tổng thể */
+    .stApp { background-color: #f8fafc; }
     
-    /* Card thiết kế dạng card trắng, đổ bóng nhẹ */
-    .clean-card {
-        background: #ffffff;
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        margin-bottom: 20px;
-        border: 1px solid #e9ecef;
+    /* Header chuyên nghiệp hơn */
+    .header-box {
+        background: linear-gradient(135deg, #007353 0%, #005a42 100%);
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        color: white;
+        box-shadow: 0 10px 25px rgba(0, 115, 83, 0.2);
+        margin-bottom: 30px;
     }
     
-    h1, h2 { color: #007353 !important; font-weight: 700; }
-    
+    /* Card nội dung sáng sủa, đổ bóng mềm */
+    .content-box {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Input Fields */
+    .stNumberInput, .stSlider { margin-bottom: 15px; }
+
+    /* Button "Xịn" */
     .stButton > button {
-        background: #007353 !important;
-        color: white !important;
-        border-radius: 8px !important;
-        font-weight: bold;
         width: 100%;
+        height: 60px;
+        background-color: #FFCC00 !important;
+        color: #007353 !important;
+        font-weight: 800 !important;
+        font-size: 18px !important;
+        border-radius: 12px !important;
         border: none;
+        transition: 0.3s;
     }
-    
-    .stMetric { background: #f1f3f5; padding: 10px; border-radius: 10px; }
+    .stButton > button:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(255, 204, 0, 0.3); }
+
+    /* Kết quả */
+    .metric-card {
+        background: #f1f5f9;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# =========================================================
-# UI LAYOUT
-# =========================================================
-st.title("🏦 BIDV Risk Intelligence")
-st.markdown("Hệ thống dự báo rời bỏ khách hàng - Giao diện chuyên nghiệp")
-st.markdown("<br>", unsafe_allow_html=True)
+# UI
+st.markdown('<div class="header-box"><h1>🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</h1><p>Giải pháp Quản trị Rủi ro chuẩn BIDV</p></div>', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("📋 Thông tin khách hàng")
+    st.markdown('<div class="content-box">', unsafe_allow_html=True)
     age = st.slider("🎂 Tuổi", 20, 80, 35)
     credit_sco = st.slider("💳 Điểm tín dụng", 495, 800, 650)
     balance = st.number_input("💰 Số dư tài khoản (VND)", value=50000000)
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col2:
-    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("📊 Thông tin sử dụng")
+    st.markdown('<div class="content-box">', unsafe_allow_html=True)
     monthly_ir = st.number_input("💵 Thu nhập hàng tháng (VND)", value=15000000)
     nums_service = st.slider("🏦 Số lượng dịch vụ", 1, 8, 3)
     engagement_score = st.slider("🤝 Điểm tương tác app", 0, 100, 50)
     active_text = st.radio("📱 Hoạt động gần đây", ["Có", "Không"], horizontal=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-if st.button("🚀 XEM KẾT QUẢ PHÂN TÍCH"):
-    # Xử lý logic
+if st.button("🔍 DỰ ĐOÁN NGAY"):
+    # Logic
     active_member = 1 if active_text == "Có" else 0
-    features = pd.DataFrame([{'monthly_ir': monthly_ir, 'credit_sco': credit_sco, 'nums_service': nums_service, 
-                              'engagement_score': engagement_score, 'balance': balance, 'age': age, 'active_member': active_member}])
+    input_df = pd.DataFrame([{
+        'monthly_ir': monthly_ir, 'credit_sco': credit_sco, 'nums_service': nums_service,
+        'engagement_score': engagement_score, 'balance': balance, 'age': age, 'active_member': active_member
+    }])
     
-    risk_score = model.predict_proba(features)[0][1]
+    risk_score = model.predict_proba(input_df)[0][1]
     risk_percent = round(risk_score * 100, 2)
 
-    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    c1, c2 = st.columns([1, 2])
+    st.markdown("---")
+    res_col1, res_col2, res_col3 = st.columns(3)
+    res_col1.metric("Risk Score", f"{risk_percent}%")
+    res_col2.metric("Level", "HIGH" if risk_percent > 70 else "LOW")
+    res_col3.metric("Action", "URGENT" if risk_percent > 70 else "KEEP")
     
-    with c1:
-        st.metric("Risk Score", f"{risk_percent}%")
-    
-    with c2:
-        # Gauge chart nhưng nền trắng
-        fig = go.Figure(go.Indicator(
-            mode = "gauge+number", value = risk_percent,
-            gauge = {'axis': {'range': [0, 100]}, 'bar': {'color': "#007353"}}
-        ))
-        fig.update_layout(height=200, margin={'t':0, 'b':0, 'l':0, 'r':0})
-        st.plotly_chart(fig, use_container_width=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.progress(int(risk_percent))
