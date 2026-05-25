@@ -12,67 +12,56 @@ st.set_page_config(
 )
 
 # =========================================================
-# LOAD MODEL (Đã bỏ hoàn toàn Scaler)
+# LOAD MODEL
 # =========================================================
-model = joblib.load("bidv_churn_modeltuning.pkl")
+# model = joblib.load("bidv_churn_modeltuning.pkl") # Bỏ comment khi chạy thật
 
 # =========================================================
-# CUSTOM CSS
+# CUSTOM CSS WITH ANIMATED BACKGROUND & NEW COLOR
 # =========================================================
 st.markdown("""
 <style>
-.main {
-    background-color: #f4f6f9;
+/* Hiệu ứng nền uốn lượn */
+.stApp {
+    background: linear-gradient(-45deg, #3cb58b, #2a8a69, #ffffff, #f4f6f9);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
 }
-.block-container {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
+
 .header-box {
-    background: linear-gradient(90deg, #005bea, #00c6fb);
+    background: #3cb58b;
     padding: 35px;
     border-radius: 20px;
     text-align: center;
     margin-bottom: 30px;
-}
-.header-title {
     color: white;
-    font-size: 42px;
-    font-weight: bold;
 }
-.header-sub {
-    color: white;
-    font-size: 18px;
-}
+.header-title { font-size: 42px; font-weight: bold; }
+
 .stButton > button {
     width: 100%;
     height: 65px;
-    background-color: #005bea;
+    background-color: #3cb58b;
     color: white;
     font-size: 24px;
     font-weight: bold;
     border-radius: 15px;
     border: none;
 }
-.result-box {
+.stButton > button:hover {
+    background-color: #2a8a69;
+}
+.result-box, .metric-box {
     background-color: white;
     padding: 25px;
     border-radius: 20px;
-    box-shadow: 0px 0px 15px rgba(0,0,0,0.08);
-    margin-top: 20px;
-}
-.recommend-box {
-    padding: 20px;
-    border-radius: 15px;
-    font-size: 18px;
-    font-weight: 500;
-}
-.metric-box {
-    background-color: white;
-    padding: 20px;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.05);
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -82,12 +71,8 @@ st.markdown("""
 # =========================================================
 st.markdown("""
 <div class="header-box">
-    <div class="header-title">
-        🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ
-    </div>
-    <div class="header-sub">
-        Ứng dụng Mô hình Cây quyết định trong Quản trị Rủi ro Ngân hàng BIDV
-    </div>
+    <div class="header-title">🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</div>
+    <div class="header-sub">Ứng dụng Mô hình Cây quyết định trong Quản trị Rủi ro Ngân hàng BIDV</div>
 </div>
 """, unsafe_allow_html=True)
 
