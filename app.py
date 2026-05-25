@@ -1,4 +1,21 @@
-import streamlit as st
+st.markdown("""
+<style>
+    .ai-circle {
+        width: 150px;
+        height: 150px;
+        border: 5px solid;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 20px auto;
+    }
+    .ai-percent { font-size: 25px; font-weight: bold; color: white; }
+    .ai-risk-title { text-align: center; font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+    .ai-sub { text-align: center; color: #888; margin-bottom: 20px; }
+    .ai-mini-card { background: #1e1e1e; padding: 15px; border-radius: 10px; border-left: 5px solid #00ffae; }
+</style>
+""", unsafe_allow_html=True)
 import pandas as pd
 import joblib
 import time
