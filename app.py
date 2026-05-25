@@ -215,29 +215,6 @@ html_code = """
 components.html(html_code, height=750, scrolling=True)
 # =========================================================
 # PREDICTION LOGIC
-# =========================================================
-if predict_btn:
-
-    # =====================================================
-    # 1. TẠO DATAFRAME VỚI ĐÚNG 7 CỘT THEO ĐÚNG THỨ TỰ YÊU CẦU
-    # =====================================================
-    features_order = [
-        'monthly_ir', 'credit_sco', 'nums_service', 
-        'engagement_score', 'balance', 'age', 'active_member'
-    ]
-    
-    input_df = pd.DataFrame([{
-        'monthly_ir': monthly_ir,
-        'credit_sco': credit_sco,
-        'nums_service': nums_service,
-        'engagement_score': engagement_score,
-        'balance': balance,
-        'age': age,
-        'active_member': active_member
-    }])
-    
-    # Đảm bảo thứ tự cột gửi vào mô hình chuẩn xác 100%
-    final_input = input_df[features_order]
 
     # =====================================================
     # 2. DỰ ĐOÁN TRỰC TIẾP KHÔNG QUA SCALER
