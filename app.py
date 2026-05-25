@@ -9,7 +9,6 @@ st.set_page_config(page_title="BIDV Churn Prediction", page_icon="🏦", layout=
 
 @st.cache_resource
 def load_model():
-    # Đảm bảo file .pkl ở cùng thư mục
     return joblib.load("bidv_churn_modeltuning.pkl")
 
 try:
@@ -18,17 +17,19 @@ except:
     model = None
 
 # =========================================================
-# CSS HOÀN CHỈNH
+# CSS HOÀN CHỈNH (Đã thêm lại wave-container)
 # =========================================================
 st.markdown("""
 <style>
-    /* 2. Header & Container */
-    .header-box { background: #007353; padding: 10px; border-radius: 10px; color: white; text-align: center; margin-bottom: 20px; }
-    div[data-testid="column"] { background: rgba(255, 255, 255, 0.95); padding: 20px !important; border-radius: 15px; border: 1px solid #eee; }
-    
-    /* 3. Chữ nhỏ gọn */
+    .wave-container {
+        position: fixed; bottom: 0; left: 0; width: 100%; height: 120px;
+        z-index: 0; pointer-events: none; opacity: 0.5;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23FFCC00' d='M0,192L48,176C96,160,192,128,288,133.3C384,139,480,181,576,197.3C672,213,768,203,864,170.7C960,139,1056,85,1152,80C1248,75,1344,117,1392,138.7L1440,160L1440,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: repeat-x; background-size: 1440px 100%; background-position: bottom;
+    }
+    .header-box { background: #007353; padding: 10px; border-radius: 10px; color: white; text-align: center; margin-bottom: 20px; z-index: 1; position: relative; }
+    div[data-testid="column"] { background: rgba(255, 255, 255, 0.95); padding: 20px !important; border-radius: 15px; border: 1px solid #eee; z-index: 1; position: relative; }
     .small-text { font-size: 14px !important; }
-    .risk-label { font-size: 18px !important; font-weight: bold; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -66,28 +67,22 @@ with col3:
         risk_score = model.predict_proba(input_data)[0][1]
         risk_percent = round(risk_score * 100, 2)
         
+        # Đã đồng bộ tên biến tại đây
         if risk_percent < 30:
-            risk_level = "🟢 LOW RISK"
-            prediction_text = "✅ Khách hàng có khả năng tiếp tục sử dụng dịch vụ"
-            recommendation = "✅ Duy trì mối quan hệ tốt và tiếp tục chăm sóc định kỳ."
-            color = "green"
+            risk_level, prediction_text, color = "🟢 LOW RISK", "Khả năng tiếp tục sử dụng dịch vụ.", "green"
         elif risk_percent <= 70:
-            risk_level = "🟡 MEDIUM RISK"
-            prediction_text = "⚠️ Khách hàng có nguy cơ rời bỏ"
-            recommendation = "📞 Nên chăm sóc chủ động: Gọi điện tư vấn, tặng ưu đãi lãi suất, voucher."
-            color = "orange"
+            risk_level, prediction_text, color = "🟡 MEDIUM RISK", "Nguy cơ rời bỏ trung bình.", "orange"
         else:
-            risk_level = "🔴 HIGH RISK"
-            prediction_text = "⚠️ Khách hàng có nguy cơ rời bỏ"
-            recommendation = "🚨 Cần liên hệ khẩn cấp trong 24h để giữ chân khách hàng."
-            color = "red"
+            risk_level, prediction_text, color = "🔴 HIGH RISK", "Nguy cơ rời bỏ cao.", "red"
 
-        # Hiển thị nhỏ gọn
         c1, c2 = st.columns(2)
         c1.metric("SCORE", f"{risk_percent}%")
-        c2.markdown(f"**LEVEL**<br><span style='color:{color}; font-size:18px;'>{level}</span>", unsafe_allow_html=True)
+        # Đã sửa lỗi biến 'level' thành 'risk_level'
+        c2.markdown(f"**LEVEL**<br><span style='color:{color}; font-size:18px;'>{risk_level}</span>", unsafe_allow_html=True)
         
         st.progress(int(risk_percent))
-        st.markdown(f"<div class='small-text' style='color:{color}; margin-top:10px;'>{desc}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='small-text' style='color:{color}; margin-top:10px;'>{prediction_text}</div>", unsafe_allow_html=True)
+    elif predict_btn and not model:
+        st.error("Model chưa được load!")
     else:
         st.info("Nhập thông tin và nhấn nút để xem kết quả.")
