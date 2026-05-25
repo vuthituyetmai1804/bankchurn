@@ -346,32 +346,4 @@ if predict_btn:
             "✅ Duy trì mối quan hệ tốt và tiếp tục chăm sóc định kỳ."
         )
 
-    # =========================
-    # FEATURE IMPORTANCE
-    # =========================
-
-    st.markdown("---")
-
-    st.subheader("📊 Các yếu tố ảnh hưởng")
-
-    importance_data = pd.DataFrame({
-        'Yếu tố': [
-            'Điểm tín dụng',
-            'Số dư tài khoản',
-            'Thu nhập',
-            'Mức độ hoạt động',
-            'Số năm gắn bó'
-        ],
-        'Giá trị': [
-            credit_score,
-            balance,
-            monthly_income,
-            active_member,
-            tenure
-        ]
-    })
-
-    st.dataframe(
-        importance_data,
-        use_container_width=True
-    )
+  
