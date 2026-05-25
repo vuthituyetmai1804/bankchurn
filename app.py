@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # =========================================================
-# LOAD MODEL & SCALER
+# LOAD MODEL (Đã bỏ hoàn toàn Scaler)
 # =========================================================
 model = joblib.load("bidv_churn_model.pkl")
 
@@ -86,7 +86,7 @@ st.markdown("""
         🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ
     </div>
     <div class="header-sub">
-        AI-Powered Bank Customer Churn Prediction
+        AI-Powered Bank Customer Churn Prediction (No-Scaler Version)
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -119,6 +119,10 @@ with col1:
         step=1000000
     )
 
+# =========================================================
+# RIGHT COLUMN
+# =========================================================
+with col2:
     monthly_ir = st.number_input(
         "💵 Thu nhập hàng tháng (VND)",
         min_value=0,
@@ -126,23 +130,9 @@ with col1:
         step=1000000
     )
 
-# =========================================================
-# RIGHT COLUMN
-# =========================================================
-with col2:
-    nums_card = st.slider(
-        "💳 Số lượng thẻ sở hữu",
-        1, 5, 1
-    )
-
     nums_service = st.slider(
         "🏦 Số lượng dịch vụ sử dụng",
         1, 10, 3
-    )
-
-    tenure_ye = st.slider(
-        "⏳ Số năm gắn bó (Tenure)",
-        0, 20, 2
     )
 
     engagement_score = st.slider(
@@ -171,57 +161,28 @@ predict_btn = st.button("🔍 DỰ ĐOÁN NGAY")
 if predict_btn:
 
     # =====================================================
-    # 1. TẠO DATAFRAME CHỈ GỒM KHỚP ĐÚNG 7 CỘT CỦA SCALER
+    # 1. TẠO DATAFRAME VỚI ĐÚNG 7 CỘT THEO ĐÚNG THỨ TỰ YÊU CẦU
     # =====================================================
-    scaler_features = [
-        'credit_sco', 'age', 'balance', 'monthly_ir', 
-        'nums_card', 'nums_service', 'engagement_score'
+    features_order = [
+        'monthly_ir', 'credit_sco', 'nums_service', 
+        'engagement_score', 'balance', 'age', 'active_member'
     ]
     
-    input_for_scaler = pd.DataFrame([{
-        'credit_sco': credit_sco,
-        'age': age,
-        'balance': balance,
+    input_df = pd.DataFrame([{
         'monthly_ir': monthly_ir,
-        'nums_card': nums_card,
+        'credit_sco': credit_sco,
         'nums_service': nums_service,
-        'engagement_score': engagement_score
+        'engagement_score': engagement_score,
+        'balance': balance,
+        'age': age,
+        'active_member': active_member
     }])
     
-    # Đảm bảo thứ tự cột chuẩn xác tuyệt đối cho bộ lọc scaler
-    input_for_scaler = input_for_scaler[scaler_features]
+    # Đảm bảo thứ tự cột gửi vào mô hình chuẩn xác 100%
+    final_input = input_df[features_order]
 
     # =====================================================
-    # 2. TIẾN HÀNH SCALE DỮ LIỆU
-    # =====================================================
-    scaled_array = scaler.transform(input_for_scaler)
-    
-    # Chuyển mảng đã scale ngược lại thành DataFrame để ghép cột tiếp theo
-    input_scaled_df = pd.DataFrame(scaled_array, columns=scaler_features)
-
-    # =====================================================
-    # 3. GHÉP THÊM CÁC CỘT KHÔNG SCALE VÀO DATAFRAME CHUNG
-    # =====================================================
-    input_scaled_df['tenure_ye'] = tenure_ye
-    input_scaled_df['active_member'] = active_member
-
-    # =====================================================
-    # 4. ĐỒNG BỘ THỨ TỰ CỘT THEO KHUÔN MẪU CỦA MODEL
-    # =====================================================
-    if hasattr(model, 'feature_names_in_'):
-        # Ép dữ liệu theo ĐÚNG và CHÍNH XÁC thứ tự cột mô hình yêu cầu lúc train
-        model_features = list(model.feature_names_in_)
-        final_input = input_scaled_df[model_features]
-    else:
-        # Trường hợp phòng hờ: Nếu model không lưu tên cột, sử dụng danh sách mặc định ổn định nhất
-        default_model_features = [
-            'credit_sco', 'age', 'balance', 'monthly_ir', 
-            'nums_card', 'nums_service', 'engagement_score', 'tenure_ye', 'active_member'
-        ]
-        final_input = input_scaled_df[default_model_features]
-
-    # =====================================================
-    # 5. DỰ ĐOÁN XÁC SUẤT (PREDICT PROBABILITY)
+    # 2. DỰ ĐOÁN TRỰC TIẾP KHÔNG QUA SCALER
     # =====================================================
     risk_score = model.predict_proba(final_input)[0][1]
     risk_percent = round(risk_score * 100, 2)
