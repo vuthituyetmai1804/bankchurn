@@ -34,7 +34,7 @@ model, scaler = load_model()
 if model is None:
     st.stop()
 
-# ==================== INPUT FORM (ĐƠN GIẢN THEO YÊU CẦU) ====================
+# ==================== INPUT FORM (THEO YÊU CẦU CỦA BẠN) ====================
 st.header("📋 Nhập Thông Tin Khách Hàng")
 
 col1, col2 = st.columns(2)
@@ -61,31 +61,28 @@ with col4:
 # ==================== DỰ ĐOÁN ====================
 if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
     try:
-        # TẠO ĐÚNG CÁC CỘT ONE-HOT NHƯ MODEL ĐÃ TRAIN
         input_data = {
             'credit_sco': [credit_score],
+            'gender': ['male'],
             'age': [age],
             'balance': [balance],
             'monthly_ir': [monthly_income],
             'tenure_ye': [tenure],
+            'married': [1],
             'nums_card': [nums_card],
             'nums_service': [nums_service],
-            'engagement_score': [engagement_score],
-            'risk_score': [0.15],
             'active_member': [1 if active_member == "Có" else 0],
-            'married': [1],
             'last_transaction_month': [3],
+            'customer_segment': ['Mass'],
+            'engagement_score': [engagement_score],
+            'loyalty_level': [loyalty_level],
+            'risk_score': [0.15],
+            'risk_segment': ['Low'],
             'cluster_group': [4],
+            'recency_days': [30],
+            'tenure_days': [tenure * 365],
             
-            # One-Hot Columns
-            'gender_male': [1],
-            'gender_female': [0],
-            'customer_segment_Mass': [1],
-            'customer_segment_Priority': [0],
-            'customer_segment_Emerging': [0],
-            'loyalty_level_Bronze': [1 if loyalty_level == "Bronze" else 0],
-            'loyalty_level_Silver': [1 if loyalty_level == "Silver" else 0],
-            'loyalty_level_Gold': [1 if loyalty_level == "Gold" else 0],
+            # One-hot columns
             'digital_behavior_offline': [0],
             'origin_province_TP. Hồ Chí Minh': [1],
             'origin_province_Hà Nội': [0],
