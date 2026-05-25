@@ -56,10 +56,10 @@ with col2:
     engagement_score = st.slider("Điểm tương tác app", 0, 100, 50)
     st.write("---")
     predict_btn = st.button("🚀 DỰ ĐOÁN NGAY", use_container_width=True)
-
 with col3:
     st.markdown("##### 🎯 Kết quả dự báo")
     if predict_btn and model:
+        # Dự đoán
         input_data = pd.DataFrame([{'monthly_ir': monthly_ir, 'credit_sco': credit_sco, 'nums_service': nums_service, 
                                     'engagement_score': engagement_score, 'balance': balance, 'age': age, 
                                     'active_member': 1 if active_text == "Có" else 0}])
@@ -67,22 +67,48 @@ with col3:
         risk_score = model.predict_proba(input_data)[0][1]
         risk_percent = round(risk_score * 100, 2)
         
-        # Đã đồng bộ tên biến tại đây
+        # LOGIC ĐẦY ĐỦ CỦA BẠN
         if risk_percent < 30:
-            risk_level, prediction_text, color = "🟢 LOW RISK", "Khả năng tiếp tục sử dụng dịch vụ.", "green"
+            risk_level = "🟢 LOW RISK"
+            prediction_text = "✅ Khách hàng có khả năng tiếp tục sử dụng dịch vụ"
+            recommendation = "✅ Duy trì mối quan hệ tốt và tiếp tục chăm sóc định kỳ."
+            color = "green"
         elif risk_percent <= 70:
-            risk_level, prediction_text, color = "🟡 MEDIUM RISK", "Nguy cơ rời bỏ trung bình.", "orange"
+            risk_level = "🟡 MEDIUM RISK"
+            prediction_text = "⚠️ Khách hàng có nguy cơ rời bỏ"
+            recommendation = "📞 Nên chăm sóc chủ động: Gọi điện tư vấn, tặng ưu đãi lãi suất, voucher."
+            color = "orange"
         else:
-            risk_level, prediction_text, color = "🔴 HIGH RISK", "Nguy cơ rời bỏ cao.", "red"
+            risk_level = "🔴 HIGH RISK"
+            prediction_text = "⚠️ Khách hàng có nguy cơ rời bỏ"
+            recommendation = "🚨 Cần liên hệ khẩn cấp trong 24h để giữ chân khách hàng."
+            color = "red"
 
+        # 1. METRICS (SCORE & LEVEL)
         c1, c2 = st.columns(2)
         c1.metric("SCORE", f"{risk_percent}%")
-        # Đã sửa lỗi biến 'level' thành 'risk_level'
-        c2.markdown(f"**LEVEL**<br><span style='color:{color}; font-size:18px;'>{risk_level}</span>", unsafe_allow_html=True)
+        # Dùng markdown để chữ Level nhỏ gọn, không bị vỡ
+        c2.markdown(f"**LEVEL**<br><span style='color:{color}; font-size:16px; font-weight:bold;'>{risk_level}</span>", unsafe_allow_html=True)
         
+        # 2. PROGRESS BAR
         st.progress(int(risk_percent))
-        st.markdown(f"<div class='small-text' style='color:{color}; margin-top:10px;'>{prediction_text}</div>", unsafe_allow_html=True)
+        
+        # 3. PREDICTION TEXT BOX
+        st.markdown(f"""
+        <div style="background-color:#f9f9f9; padding:10px; border-radius:10px; border:1px solid #ddd; margin-top:10px;">
+            <p style="color:{color}; font-weight:bold; margin:0;">{prediction_text}</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # 4. RECOMMENDATION BOX
+        st.markdown(f"""
+        <div style="background-color:#ffffff; padding:10px; border-radius:10px; border-left:5px solid {color}; margin-top:10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.05);">
+            <p style="font-weight:bold; margin-bottom:5px;">🎯 Khuyến nghị:</p>
+            <p style="font-size:14px; margin:0;">{recommendation}</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
     elif predict_btn and not model:
-        st.error("Model chưa được load!")
+        st.error("Model chưa được tải!")
     else:
         st.info("Nhập thông tin và nhấn nút để xem kết quả.")
