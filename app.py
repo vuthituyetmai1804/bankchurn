@@ -307,7 +307,7 @@ if predict_btn:
     </div>
     """, unsafe_allow_html=True)
     
-   if predict_btn:
+if predict_btn:
     st.write("### 🧪 THÔNG TIN KIỂM TRA LỖI MODEL:") # ✅ Đã thụt lề vào trong 4 khoảng trắng
     
     # Tất cả các dòng tiếp theo nằm trong khối lệnh if cũng phải thẳng hàng:
