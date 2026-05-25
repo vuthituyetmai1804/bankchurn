@@ -34,18 +34,18 @@ st.markdown("""
 /* 1. Thiết lập chung cho nền trang */
 .stApp { background-color: #f4f6f9; }
 
-/* 2. Lớp sóng uốn lượn cố định (Wave Container) - Màu Vàng hoa mai #FFCC00 */
+/* 2. Lớp các sợi (Lines Container) - Màu Vàng hoa mai #FFCC00 */
 .wave-container {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 200px;
+    height: 150px;
     z-index: 0;
     pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23FFCC00' fill-opacity='0.4' d='M0,192L48,176C96,160,192,128,288,133.3C384,139,480,181,576,197.3C672,213,768,203,864,170.7C960,139,1056,85,1152,80C1248,75,1344,117,1392,138.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
-    background-size: cover;
-    background-repeat: no-repeat;
+    /* Sử dụng SVG dạng đường kẻ song song */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3Cpattern id='lines' width='40' height='40' patternUnits='userSpaceOnUse' patternTransform='rotate(45)'%3E%3Cline x1='0' y1='0' x2='0' y2='40' stroke='%23FFCC00' stroke-width='2' stroke-opacity='0.3'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23lines)'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
 }
 
 /* 3. Container nội dung chính */
@@ -68,8 +68,6 @@ st.markdown("""
     color: white;
     box-shadow: 0px 10px 20px rgba(0, 115, 83, 0.3);
 }
-.header-title { font-size: 50px; font-weight: 900; margin-bottom: 10px; color: white; }
-.header-sub { font-size: 18px; color: rgba(255,255,255,0.9); }
 
 /* 5. Nút bấm bo tròn - Màu Xanh ngọc lục bảo #007353 */
 .stButton > button {
