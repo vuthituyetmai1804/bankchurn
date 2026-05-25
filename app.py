@@ -77,7 +77,7 @@ col_logo_l, col_logo_m, col_logo_r = st.columns([1, 1, 1])
 
 with col_logo_m:
     # Tăng width để logo to hơn như bạn muốn
-    st.image("https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg", width=400)
+    st.image("https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg", width=200)
 st.markdown("""  
 <div style="text-align: center; margin-bottom: 30px;">
     <h2 style="color: #007353; font-weight: 800; margin-bottom: 5px;">🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</h2>
