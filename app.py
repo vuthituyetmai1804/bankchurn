@@ -623,7 +623,7 @@ if predict_btn:
             risk_name = "RỦI RO CAO"
             glow = "#ff5c7a"
     
-           st.markdown(f"""
+    st.markdown(f"""
     <div class="ai-result-card">
     
         <h2 style="
