@@ -2,11 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# =========================================================
-# CONFIG & MODEL
-# =========================================================
-st.set_page_config(page_title="BIDV Churn Prediction", page_icon="🏦", layout="wide")
-
+# Cache model
 @st.cache_resource
 def load_model():
     return joblib.load("bidv_churn_modeltuning.pkl")
@@ -17,120 +13,240 @@ except Exception as e:
     st.error(f"⚠️ Không thể tải model: {e}")
     st.stop()
 
-# =========================================================
-# CUSTOM CSS (Sợi sóng chéo & Giao diện chuẩn)
-# =========================================================
+# ====================== PAGE CONFIG ======================
+st.set_page_config(
+    page_title="BIDV | Churn Prediction",
+    page_icon="🏦",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
+
+# ====================== GLASSMORPHISM CSS ======================
 st.markdown("""
 <style>
-.stApp {
-    background-color: #f4f6f9;
-    background-image: 
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 800'%3E%3Cpath fill='none' stroke='%23FFCC00' stroke-width='1' stroke-opacity='0.2' d='M-100,800 C200,600 400,200 800,300 C1200,400 1400,0 1600,-100'/%3E%3Cpath fill='none' stroke='%23FFCC00' stroke-width='1' stroke-opacity='0.2' d='M-100,850 C200,650 400,250 800,350 C1200,450 1400,50 1600,-50'/%3E%3Cpath fill='none' stroke='%23FFCC00' stroke-width='1' stroke-opacity='0.2' d='M-100,900 C200,700 400,300 800,400 C1200,500 1400,100 1600,0'/%3E%3Cpath fill='none' stroke='%23FFCC00' stroke-width='1' stroke-opacity='0.2' d='M-100,950 C200,750 400,350 800,450 C1200,550 1400,150 1600,50'/%3E%3C/svg%3E");
-    background-attachment: fixed;
-    background-size: cover;
-}
+    /* Background gradient */
+    .stApp {
+        background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%);
+        color: #e2e8f0;
+    }
 
-.block-container {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 30px;
-    padding: 3rem !important;
-    box-shadow: 0px 10px 30px rgba(0,0,0,0.1);
-    z-index: 1;
-    position: relative;
-}
+    /* Glassmorphism Container */
+    .glass-container {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 24px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
 
-.header-box {
-    background: #007353;
-    padding: 40px;
-    border-radius: 30px;
-    text-align: center;
-    margin-bottom: 30px;
-    color: white;
-    box-shadow: 0px 10px 20px rgba(0, 115, 83, 0.3);
-}
-.header-title { font-size: 50px; font-weight: 900; margin-bottom: 10px; color: white; }
-.header-sub { font-size: 18px; color: rgba(255,255,255,0.9); }
+    /* Header */
+    .main-header {
+        background: linear-gradient(90deg, #007353, #00a67e);
+        padding: 2.5rem 0;
+        border-radius: 0 0 30px 30px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 115, 83, 0.4);
+        position: relative;
+        overflow: hidden;
+    }
 
-.stButton > button {
-    width: 100%;
-    height: 65px;
-    background-color: #007353 !important;
-    color: white !important;
-    font-size: 24px;
-    font-weight: bold;
-    border-radius: 50px !important;
-    border: none;
-    transition: all 0.3s ease;
-}
-.stButton > button:hover { filter: brightness(1.2); transform: translateY(-2px); }
+    .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+        color: white;
+    }
 
-.result-box, .recommend-box {
-    background-color: white;
-    padding: 25px;
-    border-radius: 25px !important;
-    box-shadow: 0px 8px 20px rgba(0,0,0,0.08);
-    border: 1px solid #e1e1e1;
-    margin-bottom: 20px;
-}
-h2 { color: #007353 !important; }
-[data-testid="stMetricValue"] { color: #007353; }
+    .logo {
+        font-size: 42px;
+        font-weight: 900;
+        letter-spacing: -2px;
+        margin-bottom: 8px;
+    }
+
+    /* Input Cards */
+    .input-card {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 1.8rem;
+        transition: all 0.3s ease;
+    }
+
+    .input-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(0, 115, 83, 0.5);
+    }
+
+    /* Custom Button */
+    .predict-btn {
+        background: linear-gradient(90deg, #007353, #00c48c);
+        color: white;
+        font-size: 1.4rem;
+        font-weight: 700;
+        padding: 18px 60px;
+        border: none;
+        border-radius: 50px;
+        width: 100%;
+        margin: 2rem 0;
+        box-shadow: 0 10px 30px rgba(0, 115, 83, 0.4);
+        transition: all 0.3s ease;
+    }
+
+    .predict-btn:hover {
+        transform: scale(1.03);
+        box-shadow: 0 15px 40px rgba(0, 115, 83, 0.5);
+    }
+
+    /* Result Cards */
+    .result-card {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 24px;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .risk-high { border-left: 6px solid #ef4444; }
+    .risk-medium { border-left: 6px solid #f59e0b; }
+    .risk-low { border-left: 6px solid #22c55e; }
 </style>
 """, unsafe_allow_html=True)
 
-# =========================================================
-# UI LAYOUT
-# =========================================================
+# ====================== HEADER ======================
 st.markdown("""
-<div class="header-box">
-    <div class="header-title">🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</div>
-    <div class="header-sub">Ứng dụng Mô hình Cây quyết định trong Quản trị Rủi ro Ngân hàng BIDV</div>
+<div class="main-header">
+    <div class="header-content">
+        <div style="font-size: 3.2rem; font-weight: 800; letter-spacing: -3px;">
+            BIDV <span style="color:#fff;">INTELLIGENCE</span>
+        </div>
+        <h1 style="font-size: 2.1rem; margin: 12px 0 8px 0; font-weight: 600;">
+            HỆ THỐNG DỰ ĐOÁN RỜI BỎ KHÁCH HÀNG
+        </h1>
+        <p style="font-size: 1.1rem; opacity: 0.9;">
+            Mô hình Machine Learning • Độ chính xác cao • Hỗ trợ quyết định nhanh chóng
+        </p>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("## 📋 Nhập thông tin khách hàng")
-col1, col2 = st.columns(2)
+# ====================== MAIN CONTENT ======================
+col1, col2 = st.columns([1, 1.1])
 
 with col1:
-    age = st.slider("🎂 Tuổi", 20, 80, 35)
-    credit_sco = st.slider("💳 Điểm tín dụng", 495, 800, 650)
-    balance = st.number_input("💰 Số dư tài khoản (VND)", min_value=0, value=50000000, step=1000000)
+    st.markdown('<div class="glass-container">', unsafe_allow_html=True)
+    st.markdown("### 📋 Thông tin khách hàng")
+
+    c1, c2 = st.columns(2)
+    
+    with c1:
+        age = st.slider("🎂 Tuổi", 20, 80, 35, label_visibility="collapsed")
+        st.caption("Tuổi")
+        
+        credit_sco = st.slider("💳 Điểm tín dụng", 495, 800, 650, label_visibility="collapsed")
+        st.caption("Điểm tín dụng")
+        
+        balance = st.number_input("💰 Số dư (VND)", 
+                                min_value=0, 
+                                value=50_000_000, 
+                                step=1_000_000,
+                                label_visibility="collapsed")
+        st.caption("Số dư tài khoản")
+
+    with c2:
+        monthly_ir = st.number_input("💵 Thu nhập hàng tháng (VND)", 
+                                   min_value=0, 
+                                   value=15_000_000, 
+                                   step=1_000_000,
+                                   label_visibility="collapsed")
+        st.caption("Thu nhập hàng tháng")
+        
+        nums_service = st.slider("🏦 Số dịch vụ đang sử dụng", 1, 8, 3, label_visibility="collapsed")
+        st.caption("Số dịch vụ")
+        
+        engagement_score = st.slider("📱 Điểm tương tác ứng dụng", 0, 100, 50, label_visibility="collapsed")
+        st.caption("Điểm tương tác")
+
+    active_text = st.radio("📱 Hoạt động gần đây", ["Có", "Không"], horizontal=True)
+    active_member = 1 if active_text == "Có" else 0
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 with col2:
-    monthly_ir = st.number_input("💵 Thu nhập hàng tháng (VND)", min_value=0, value=15000000, step=1000000)
-    nums_service = st.slider("🏦 Số lượng dịch vụ sử dụng", 1, 8, 3)
-    engagement_score = st.slider("🤝 Điểm tương tác app", 0, 100, 50)
-    active_text = st.radio("📱 Hoạt động gần đây", ["Có", "Không"])
-
-active_member = 1 if active_text == "Có" else 0
-
-if st.button("🔍 DỰ ĐOÁN NGAY"):
-    features_order = ['monthly_ir', 'credit_sco', 'nums_service', 'engagement_score', 'balance', 'age', 'active_member']
-    input_df = pd.DataFrame([{
-        'monthly_ir': monthly_ir, 'credit_sco': credit_sco, 'nums_service': nums_service,
-        'engagement_score': engagement_score, 'balance': balance, 'age': age, 'active_member': active_member
-    }])[features_order]
-
-    risk_score = model.predict_proba(input_df)[0][1]
-    risk_percent = round(risk_score * 100, 2)
-
-    # Logic kết quả
-    if risk_percent < 30:
-        risk_level, color = "🟢 LOW RISK", "green"
-        prediction_text, recommendation = "✅ Khách hàng ổn định", "Duy trì chăm sóc định kỳ."
-    elif risk_percent <= 70:
-        risk_level, color = "🟡 MEDIUM RISK", "orange"
-        prediction_text, recommendation = "⚠️ Khách hàng có nguy cơ rời bỏ", "Gọi điện tư vấn, tặng ưu đãi/voucher."
-    else:
-        risk_level, color = "🔴 HIGH RISK", "red"
-        prediction_text, recommendation = "🚨 Cần liên hệ khẩn cấp trong 24h để giữ chân khách hàng.", "Gửi ưu đãi đặc biệt ngay."
-
-    st.markdown("---")
-    st.markdown("# 📊 KẾT QUẢ PHÂN TÍCH")
-    cA, cB, cC = st.columns(3)
-    cA.metric("RISK SCORE", f"{risk_percent}%")
-    cB.metric("RISK LEVEL", risk_level)
-    cC.metric("PREDICTION", "CHURN" if risk_percent >= 50 else "STAY")
-    st.progress(int(risk_percent))
+    st.markdown('<div class="glass-container">', unsafe_allow_html=True)
     
-    st.markdown(f'<div class="result-box"><h2 style="color:{color}; text-align:center;">{prediction_text}</h2></div>', unsafe_allow_html=True)
-    st.markdown(f'<div class="recommend-box" style="border-left:8px solid {color};"><h3>🎯 Khuyến nghị:</h3><p>{recommendation}</p></div>', unsafe_allow_html=True)
+    st.markdown("### 📊 Kết quả dự đoán")
+    
+    predict_btn = st.button("🔍 DỰ ĐOÁN NGAY", 
+                          type="primary", 
+                          use_container_width=True,
+                          key="predict")
+
+    if predict_btn:
+        # Prepare data
+        features_order = ['monthly_ir', 'credit_sco', 'nums_service', 
+                         'engagement_score', 'balance', 'age', 'active_member']
+        
+        input_df = pd.DataFrame([{
+            'monthly_ir': monthly_ir,
+            'credit_sco': credit_sco,
+            'nums_service': nums_service,
+            'engagement_score': engagement_score,
+            'balance': balance,
+            'age': age,
+            'active_member': active_member
+        }])
+        
+        final_input = input_df[features_order]
+        risk_score = model.predict_proba(final_input)[0][1]
+        risk_percent = round(risk_score * 100, 2)
+
+        # Risk Level
+        if risk_percent < 30:
+            level = "LOW RISK"
+            color = "#22c55e"
+            status = "🟢 AN TOÀN"
+        elif risk_percent <= 70:
+            level = "MEDIUM RISK"
+            color = "#f59e0b"
+            status = "🟡 CẢNH BÁO"
+        else:
+            level = "HIGH RISK"
+            color = "#ef4444"
+            status = "🔴 NGUY HIỂM"
+
+        # Display Results
+        st.markdown(f"""
+        <div class="result-card risk-{'low' if risk_percent < 30 else 'medium' if risk_percent <= 70 else 'high'}">
+            <h2 style="color: {color}; margin: 0; font-size: 3.5rem; font-weight: 700;">
+                {risk_percent}%
+            </h2>
+            <h3 style="margin: 8px 0 20px 0;">{status}</h3>
+            <p style="font-size: 1.3rem; margin-bottom: 20px;">{level}</p>
+            
+            <div style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 10px; overflow: hidden;">
+                <div style="width: {risk_percent}%; height: 100%; background: linear-gradient(90deg, {color}, #fff);"></div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Recommendation
+        if risk_percent < 30:
+            rec = "Khách hàng rất trung thành. Nên duy trì và mở rộng mối quan hệ."
+        elif risk_percent <= 70:
+            rec = "Cần chăm sóc chủ động: Ưu đãi lãi suất, quà tặng, tư vấn cá nhân hóa."
+        else:
+            rec = "Nguy cơ cao rời bỏ. Nên liên hệ khẩn cấp trong 24h."
+
+        st.info(f"**Khuyến nghị:** {rec}")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# Footer
+st.markdown("""
+<div style="text-align: center; margin-top: 4rem; opacity: 0.6; font-size: 0.9rem;">
+    © 2026 BIDV • Hệ thống dự đoán churn bằng Machine Learning
+</div>
+""", unsafe_allow_html=True)
