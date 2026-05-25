@@ -8,8 +8,8 @@ import joblib
 # LOAD MODEL
 # =========================
 
-model = joblib.load('/content/drive/MyDrive/bidv_churnn_model.pkl')
-scaler = joblib.load('/content/drive/MyDrive/scaler_bidv_model.pkl')
+model = joblib.load('bidv_churnn_model.pkl')
+scaler = joblib.load('scaler_bidv_model.pkl')
 
 # =========================
 # PAGE CONFIG
