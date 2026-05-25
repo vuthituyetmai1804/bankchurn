@@ -48,7 +48,7 @@ st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 st.markdown("""
 <div class="header-box">
     <div class="header-title">🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</div>
-    <div style="font-size: 16px; opacity: 0.9;">Ứng dụng Mô hình Cây quyết định trong Quản trị Rủi ro Ngân hàng BIDV</div>
+    <div style="font-size: 16px; opacity: 0.9;"> Quản trị Rủi ro Ngân hàng BIDV @ 2026</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -67,7 +67,7 @@ with col2:
     nums_service = st.slider("Số lượng dịch vụ", 1, 8, 3)
     engagement_score = st.slider("Điểm tương tác app", 0, 100, 50)
     st.write("---")
-    predict_btn = st.button("🚀 DỰ ĐOÁN NGAY", use_container_width=True)
+    predict_btn = st.button("🔍 DỰ ĐOÁN NGAY", use_container_width=True)
 with col3:
     st.markdown("##### 🎯 Kết quả dự báo")
     if predict_btn and model:
@@ -123,4 +123,4 @@ with col3:
     elif predict_btn and not model:
         st.error("Model chưa được tải!")
     else:
-        st.info("Nhập thông tin và nhấn nút để xem kết quả.")
+        st.info("Nhập thông tin và nhấn nút 🔍 DỰ ĐOÁN NGAY để xem kết quả.")
