@@ -201,14 +201,14 @@ if predict_btn:
     # =====================================================
     # SCALE INPUT
     # =====================================================
-# 1. Lấy danh sách cột chuẩn mà scaler yêu cầu
-expected_features = scaler.feature_names_in_
+    # 1. Lấy danh sách cột chuẩn mà scaler yêu cầu
+    expected_features = scaler.feature_names_in_
 
-# 2. Ép input_df theo đúng danh sách và thứ tự cột đó
-input_df = input_df.reindex(columns=expected_features)
+    # 2. Ép input_df theo đúng danh sách và thứ tự cột đó
+    input_df = input_df.reindex(columns=expected_features)
 
-# 3. Tiến hành scale dữ liệu như bình thường mà không sợ lỗi
-input_scaled = scaler.transform(input_df)
+    # 3. Tiến hành scale dữ liệu như bình thường mà không sợ lỗi
+    input_scaled = scaler.transform(input_df)
     # =====================================================
     # PREDICT PROBABILITY
     # =====================================================
