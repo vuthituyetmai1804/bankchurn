@@ -17,7 +17,7 @@ st.set_page_config(
 @st.cache_resource
 def load_my_model():
     # Đảm bảo tên file này trùng với file .pkl xịn nhất bạn vừa tải từ Colab xuống
-    return joblib.load("bidv_churn_model.pkl")
+    return joblib.load("bidv_churn_modeltuning.pkl")
 
 try:
     model = load_my_model()
