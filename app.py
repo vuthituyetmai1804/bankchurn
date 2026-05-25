@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import time
+import plotly.graph_objects as go
 
 # =========================================================
 # PAGE CONFIG
@@ -23,228 +25,17 @@ st.markdown("""
 <style>
 
 /* =========================
-BACKGROUND
+MAIN BACKGROUND
 ========================= */
 
 .stApp {
-    background: linear-gradient(135deg, #eef8f7, #f5fffd);
+    background: linear-gradient(135deg, #f7fbfb, #eef8f7);
     font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
 }
 
 /* =========================
-MAIN CONTAINER
-========================= */
-
-.block-container {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-    max-width: 1350px;
-}
-
-/* =========================
-HEADER
-========================= */
-
-.header-box {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(135deg, #006B68, #008B87);
-    padding: 45px;
-    border-radius: 30px;
-    margin-bottom: 35px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
-
-/* Wave animation */
-
-.header-box::before {
-    content: "";
-    position: absolute;
-    width: 200%;
-    height: 200px;
-    left: -50%;
-    bottom: -120px;
-
-    background: rgba(255,255,255,0.12);
-
-    border-radius: 45%;
-
-    animation: waveMove 8s linear infinite;
-}
-
-@keyframes waveMove {
-    0% {
-        transform: translateX(0) rotate(0deg);
-    }
-    100% {
-        transform: translateX(25%) rotate(360deg);
-    }
-}
-
-.header-title {
-    position: relative;
-    color: white;
-    font-size: 48px;
-    font-weight: 800;
-    text-align: center;
-    z-index: 2;
-}
-
-.header-sub {
-    position: relative;
-    color: rgba(255,255,255,0.95);
-    font-size: 20px;
-    text-align: center;
-    margin-top: 12px;
-    z-index: 2;
-}
-
-/* =========================
-CARD
-========================= */
-
-[data-testid="stVerticalBlock"] > div:has(.modern-card) {
-    background: rgba(255,255,255,0.72);
-    border-radius: 24px;
-    padding: 25px;
-    backdrop-filter: blur(10px);
-}
-
-/* =========================
-INPUT LABEL
-========================= */
-
-label {
-    font-size: 18px !important;
-    font-weight: 600 !important;
-    color: #106b4b !important;
-}
-
-/* =========================
-INPUT BOX
-========================= */
-
-.stNumberInput input,
-.stTextInput input {
-    border-radius: 14px !important;
-    border: 2px solid #d8f5e6 !important;
-    height: 52px !important;
-    background-color: white !important;
-}
-
-/* =========================
-SLIDER
-========================= */
-
-.stSlider > div > div {
-    color: #00b978 !important;
-}
-
-/* =========================
-RADIO
-========================= */
-
-.stRadio label {
-    font-size: 17px !important;
-}
-
-/* =========================
-BUTTON
-========================= */
-
-.stButton > button {
-    width: 100%;
-    height: 68px;
-
-    border: none;
-    border-radius: 18px;
-
-    background: linear-gradient(135deg, #006B68, #009E99);
-
-    color: white;
-    font-size: 24px;
-    font-weight: 700;
-
-    transition: 0.3s ease;
-
-    box-shadow: 0 10px 25px rgba(0,185,120,0.25);
-}
-
-.stButton > button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(0,185,120,0.35);
-}
-
-/* =========================
-RESULT BOX
-========================= */
-
-.result-box {
-    background: rgba(255,255,255,0.9);
-
-    padding: 35px;
-
-    border-radius: 24px;
-
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-
-    margin-top: 20px;
-
-    text-align: center;
-}
-
-/* =========================
-RECOMMEND BOX
-========================= */
-
-.recommend-box {
-    background: rgba(255,255,255,0.9);
-
-    padding: 25px;
-
-    border-radius: 20px;
-
-    font-size: 18px;
-
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-
-    margin-top: 20px;
-}
-
-/* =========================
-METRIC
-========================= */
-
-[data-testid="metric-container"] {
-    background: rgba(255,255,255,0.9);
-
-    border-radius: 20px;
-
-    padding: 20px;
-
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-
-    border: 1px solid rgba(255,255,255,0.5);
-}
-
-/* =========================
-PROGRESS BAR
-========================= */
-
-.stProgress > div > div > div > div {
-    background: linear-gradient(90deg, #00b978, #00d084);
-}
-
-/* =========================
-SECTION TITLE
-========================= */
-
-h2, h3 {
-    color: #106b4b;
-}
-
-/* =========================
-FLOATING BLUR CIRCLES
+WAVE BACKGROUND
 ========================= */
 
 .stApp::before {
@@ -252,39 +43,269 @@ FLOATING BLUR CIRCLES
 
     position: fixed;
 
-    width: 350px;
-    height: 350px;
+    top: -20%;
+    right: -10%;
 
-    background: rgba(0,208,132,0.15);
+    width: 1200px;
+    height: 1200px;
 
-    border-radius: 50%;
+    background:
+        repeating-radial-gradient(
+            circle at center,
+            transparent 0px,
+            transparent 90px,
+            rgba(0,107,104,0.03) 92px,
+            transparent 95px
+        );
 
-    top: -120px;
-    right: -100px;
+    animation: rotateWave 35s linear infinite;
 
-    filter: blur(60px);
-
-    z-index: -1;
+    z-index: -3;
 }
 
-.stApp::after {
-    content: "";
+@keyframes rotateWave {
+    0% {
+        transform: rotate(0deg);
+    }
 
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================
+FLOATING PARTICLES
+========================= */
+
+.particle {
     position: fixed;
 
-    width: 300px;
-    height: 300px;
+    width: 7px;
+    height: 7px;
 
-    background: rgba(0,185,120,0.12);
+    background: rgba(0,107,104,0.18);
 
     border-radius: 50%;
 
-    bottom: -100px;
-    left: -80px;
+    animation: floatParticle 18s linear infinite;
 
-    filter: blur(60px);
+    z-index: -2;
+}
 
-    z-index: -1;
+@keyframes floatParticle {
+
+    0% {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+}
+
+/* =========================
+HEADER
+========================= */
+
+.header-box {
+
+    position: relative;
+
+    overflow: hidden;
+
+    background: linear-gradient(135deg, #006B68, #008B87);
+
+    padding: 45px;
+
+    border-radius: 28px;
+
+    margin-bottom: 30px;
+
+    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+}
+
+.header-box::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 200%;
+    height: 250px;
+
+    background: rgba(255,255,255,0.08);
+
+    left: -40%;
+    bottom: -180px;
+
+    border-radius: 45%;
+
+    animation: waveMove 12s linear infinite;
+}
+
+@keyframes waveMove {
+
+    0% {
+        transform: translateX(0) rotate(0deg);
+    }
+
+    100% {
+        transform: translateX(20%) rotate(360deg);
+    }
+}
+
+.header-title {
+
+    position: relative;
+
+    color: white;
+
+    font-size: 52px;
+
+    font-weight: 800;
+
+    z-index: 2;
+}
+
+.header-sub {
+
+    position: relative;
+
+    color: rgba(255,255,255,0.95);
+
+    font-size: 20px;
+
+    margin-top: 10px;
+
+    z-index: 2;
+}
+
+/* =========================
+CARD
+========================= */
+
+.custom-card {
+
+    background: rgba(255,255,255,0.82);
+
+    border-radius: 24px;
+
+    padding: 28px;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+
+    backdrop-filter: blur(10px);
+
+    border: 1px solid rgba(255,255,255,0.4);
+
+    margin-bottom: 25px;
+}
+
+/* =========================
+BUTTON
+========================= */
+
+.stButton > button {
+
+    width: 100%;
+
+    height: 70px;
+
+    border: none;
+
+    border-radius: 18px;
+
+    background: linear-gradient(135deg, #006B68, #00A19D);
+
+    color: white;
+
+    font-size: 24px;
+
+    font-weight: 700;
+
+    transition: 0.3s ease;
+
+    box-shadow: 0 10px 25px rgba(0,107,104,0.25);
+}
+
+.stButton > button:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow: 0 15px 35px rgba(0,107,104,0.35);
+}
+
+/* =========================
+METRIC
+========================= */
+
+[data-testid="metric-container"] {
+
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 20px;
+
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+/* =========================
+RESULT BOX
+========================= */
+
+.result-box {
+
+    background: white;
+
+    border-radius: 24px;
+
+    padding: 30px;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+
+    margin-top: 20px;
+}
+
+/* =========================
+RECOMMENDATION
+========================= */
+
+.recommend-box {
+
+    background: white;
+
+    border-radius: 22px;
+
+    padding: 25px;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+
+    margin-top: 20px;
+}
+
+/* =========================
+SLIDER
+========================= */
+
+.stSlider > div > div {
+
+    color: #006B68 !important;
+}
+
+/* =========================
+PROGRESS
+========================= */
+
+.stProgress > div > div > div > div {
+
+    background: linear-gradient(90deg, #006B68, #00A19D);
 }
 
 </style>
@@ -377,6 +398,14 @@ predict_btn = st.button("🔍 DỰ ĐOÁN NGAY")
 # =========================================================
 if predict_btn:
 
+    with st.spinner("🤖 AI đang phân tích hành vi khách hàng..."):
+
+        scan = st.progress(0)
+
+        for percent in range(100):
+            time.sleep(0.01)
+            scan.progress(percent + 1)
+
     # =====================================================
     # 1. TẠO DATAFRAME VỚI ĐÚNG 7 CỘT THEO ĐÚNG THỨ TỰ YÊU CẦU
     # =====================================================
@@ -432,30 +461,77 @@ if predict_btn:
     # =====================================================
     # METRICS
     # =====================================================
-    colA, colB, colC = st.columns(3)
+   left, right = st.columns([1.1, 1])
 
-    with colA:
-        st.metric(
-            label="RISK SCORE",
-            value=f"{risk_percent}%"
-        )
+with left:
 
-    with colB:
-        st.metric(
-            label="RISK LEVEL",
-            value=risk_level
-        )
+    fig = go.Figure(go.Indicator(
+        mode = "gauge+number",
 
-    with colC:
-        st.metric(
-            label="PREDICTION",
-            value="CHURN" if risk_percent >= 50 else "STAY"
-        )
+        value = risk_percent,
 
-    # =====================================================
-    # PROGRESS BAR
-    # =====================================================
-    st.progress(int(risk_percent))
+        number = {
+            'suffix': "%",
+            'font': {'size': 44}
+        },
+
+        title = {
+            'text': "CHURN RISK SCORE"
+        },
+
+        gauge = {
+
+            'axis': {'range': [0,100]},
+
+            'bar': {'color': "#006B68"},
+
+            'steps': [
+
+                {'range': [0,30], 'color': "#d7f5ea"},
+                {'range': [30,70], 'color': "#ffe7a0"},
+                {'range': [70,100], 'color': "#ffb0b0"}
+            ],
+
+            'threshold': {
+
+                'line': {'color': "red", 'width': 5},
+
+                'thickness': 0.8,
+
+                'value': risk_percent
+            }
+        }
+    ))
+
+    fig.update_layout(
+
+        height=380,
+
+        margin=dict(l=20,r=20,t=60,b=20),
+
+        paper_bgcolor="rgba(0,0,0,0)",
+
+        font={'color': "#006B68"}
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+with right:
+
+    st.metric(
+        "RISK LEVEL",
+        risk_level
+    )
+
+    st.metric(
+        "PREDICTION",
+        "CHURN" if risk_percent >= 50 else "STAY"
+    )
+
+    st.metric(
+        "SUCCESS RETENTION",
+        f"{100-risk_percent}%"
+    )
 
     # =====================================================
     # PREDICTION RESULT BOX
