@@ -461,78 +461,78 @@ if predict_btn:
     # =====================================================
     # METRICS
     # =====================================================
-left, right = st.columns([1.1, 1])
+    left, right = st.columns([1.1, 1])
 
-with left:
+    with left:
 
-    fig = go.Figure(go.Indicator(
-        mode = "gauge+number",
+        fig = go.Figure(go.Indicator(
 
-        value = risk_percentage,
+            mode="gauge+number",
 
-        number = {
-            'suffix': "%",
-            'font': {'size': 44}
-        },
+            value=risk_percent,
 
-        title = {
-            'text': "CHURN RISK SCORE"
-        },
+            number={
+                'suffix': "%",
+                'font': {'size': 44}
+            },
 
-        gauge = {
+            title={
+                'text': "CHURN RISK SCORE"
+            },
 
-            'axis': {'range': [0,100]},
+            gauge={
 
-            'bar': {'color': "#006B68"},
+                'axis': {'range': [0, 100]},
 
-            'steps': [
+                'bar': {'color': "#006B68"},
 
-                {'range': [0,30], 'color': "#d7f5ea"},
-                {'range': [30,70], 'color': "#ffe7a0"},
-                {'range': [70,100], 'color': "#ffb0b0"}
-            ],
+                'steps': [
 
-            'threshold': {
+                    {'range': [0, 30], 'color': "#d7f5ea"},
+                    {'range': [30, 70], 'color': "#ffe7a0"},
+                    {'range': [70, 100], 'color': "#ffb0b0"}
+                ],
 
-                'line': {'color': "red", 'width': 5},
+                'threshold': {
 
-                'thickness': 0.8,
+                    'line': {'color': "red", 'width': 5},
 
-                'value': risk_percent
+                    'thickness': 0.8,
+
+                    'value': risk_percent
+                }
             }
-        }
-    ))
+        ))
 
-    fig.update_layout(
+        fig.update_layout(
 
-        height=380,
+            height=380,
 
-        margin=dict(l=20,r=20,t=60,b=20),
+            margin=dict(l=20, r=20, t=60, b=20),
 
-        paper_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",
 
-        font={'color': "#006B68"}
-    )
+            font={'color': "#006B68"}
+        )
 
-    st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True)
 
-with right:
+    with right:
 
-    st.metric(
-        "RISK LEVEL",
-        risk_level
-    )
+        st.metric(
+            "RISK LEVEL",
+            risk_level
+        )
 
-    st.metric(
-        "PREDICTION",
-        "CHURN" if risk_percent >= 50 else "STAY"
-    )
+        st.metric(
+            "PREDICTION",
+            "CHURN" if risk_percent >= 50 else "STAY"
+        )
 
-    st.metric(
-        "SUCCESS RETENTION",
-        f"{100-risk_percent}%"
-    )
-
+        st.metric(
+            "SUCCESS RETENTION",
+            f"{100-risk_percent}%"
+        )
     # =====================================================
     # PREDICTION RESULT BOX
     # =====================================================
