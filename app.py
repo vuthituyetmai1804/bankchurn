@@ -88,7 +88,7 @@ st.markdown("""
 
 with col_logo_m:
     # Bây giờ bạn chỉnh width thoải mái, nó sẽ luôn nằm giữa cột
-    st.image("https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg", width=350)
+    st.image("https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg", width=250)
     
 st.markdown("""  
 <div style="text-align: center; margin-bottom: 30px;">
