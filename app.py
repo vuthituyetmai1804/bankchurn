@@ -1,11 +1,9 @@
 import streamlit as st
 import pandas as pd
 import joblib
-import numpy as np
 
 st.set_page_config(page_title="BIDV Churn Predict", page_icon="🔍", layout="wide")
 
-# CSS đẹp
 st.markdown("""
 <style>
     .main {padding: 2rem;}
@@ -26,21 +24,17 @@ def load_model():
     try:
         model = joblib.load('bidv_churnn_model.pkl')
         scaler = joblib.load('scaler_bidv_model.pkl')
-        st.sidebar.success("✅ Model & Scaler loaded successfully!")
+        st.sidebar.success("✅ Model loaded")
         return model, scaler
-    except FileNotFoundError:
-        st.error("❌ Không tìm thấy file model. Vui lòng upload `bidv_churnn_model.pkl` và `scaler_bidv_model.pkl`")
-        return None, None
     except Exception as e:
         st.error(f"❌ Lỗi load model: {e}")
         return None, None
 
 model, scaler = load_model()
-
 if model is None:
     st.stop()
 
-# ==================== INPUT FORM ====================
+# ==================== INPUT FORM (GIỮ ĐƠN GIẢN) ====================
 st.header("📋 Nhập Thông Tin Khách Hàng")
 
 col1, col2 = st.columns(2)
@@ -56,7 +50,6 @@ with col2:
     active_member = st.radio("**Hoạt động gần đây**", ["Có", "Không"], horizontal=True)
     loyalty_level = st.selectbox("**Hạng khách hàng**", ["Bronze", "Silver", "Gold"])
 
-# Bổ sung
 st.subheader("Thông tin bổ sung")
 col3, col4 = st.columns(2)
 with col3:
@@ -68,8 +61,8 @@ with col4:
 # ==================== DỰ ĐOÁN ====================
 if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
     try:
-        # Chuẩn bị dữ liệu - ĐẦY ĐỦ CÁC CỘT SCALER CẦN
-        input_dict = {
+        # TẠO ĐẦY ĐỦ FEATURES (ẩn đi, chỉ dùng cho model)
+        input_data = {
             'credit_sco': [credit_score],
             'age': [age],
             'balance': [balance],
@@ -81,16 +74,42 @@ if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
             'active_member': [1 if active_member == "Có" else 0],
             'married': [1],
             'last_transaction_month': [3],
-            'risk_score': [0.15]  # Giá trị mặc định, scaler cần cột này
+            'risk_score': [0.15],
+            
+            # Các cột categorical - gán giá trị mặc định
+            'gender': ['male'],
+            'customer_segment': ['Mass'],
+            'loyalty_level': [loyalty_level],
+            'digital_behavior': ['mobile'],
+            'cluster_group': [4],
+            
+            # One-hot columns (mặc định 0)
+            'occupation_Giáo viên/Giảng viên': [0],
+            'occupation_Hưu trí': [0],
+            'occupation_Kinh doanh/Bán hàng': [0],
+            'occupation_Kế toán/Tài chính': [0],
+            'occupation_Kỹ sư/Chuyên viên IT': [0],
+            'occupation_Lao động phổ thông': [0],
+            'occupation_Nhân viên văn phòng/Công chức': [0],
+            'occupation_Nội trợ/Sinh viên': [0],
+            'occupation_Quản lý/Lãnh đạo': [0],
+            'origin_province_Bình Dương': [0],
+            'origin_province_Cần Thơ': [0],
+            'origin_province_Hà Nội': [0],
+            'origin_province_Long An': [0],
+            'origin_province_TP. Hồ Chí Minh': [1],
+            'origin_province_Tiền Giang': [0],
+            'origin_province_Tỉnh khác': [0],
+            'origin_province_Đồng Nai': [0],
+            'digital_behavior_offline': [0],
         }
         
-        input_df = pd.DataFrame(input_dict)
+        input_df = pd.DataFrame(input_data)
         
-        # Danh sách cột cần scale (phải khớp chính xác với lúc train)
+        # Scale
         cols_to_scale = ['credit_sco', 'age', 'balance', 'monthly_ir', 'nums_card', 
                         'nums_service', 'engagement_score', 'tenure_ye', 'risk_score']
         
-        # Scale dữ liệu
         input_scaled = input_df.copy()
         input_scaled[cols_to_scale] = scaler.transform(input_scaled[cols_to_scale])
         
@@ -119,18 +138,16 @@ if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
         else:
             st.success("✅ **Khách hàng có khả năng tiếp tục**")
         
-        # Khuyến nghị
         st.markdown("### 💡 Khuyến nghị hành động")
         if risk_score >= 70:
-            st.error("🚨 **Liên hệ khẩn cấp trong 24h** - Ưu đãi đặc biệt, gọi tư vấn cá nhân hóa")
+            st.error("🚨 **Liên hệ khẩn cấp trong 24h**")
         elif risk_score >= 40:
-            st.warning("⚠️ **Chăm sóc chủ động**: Gọi điện, tặng voucher, nâng cấp dịch vụ")
+            st.warning("⚠️ **Chăm sóc chủ động**: Gọi điện, tặng voucher")
         else:
-            st.success("✅ Duy trì mối quan hệ tốt, theo dõi định kỳ")
-            
+            st.success("✅ Duy trì mối quan hệ tốt")
+
     except Exception as e:
-        st.error(f"❌ Lỗi khi dự đoán: {str(e)}")
-        st.info("Vui lòng kiểm tra file scaler và model.")
+        st.error(f"❌ Lỗi dự đoán: {str(e)}")
 
 st.markdown("---")
 st.caption("BIDV Churn Prediction System • Powered by Streamlit")
