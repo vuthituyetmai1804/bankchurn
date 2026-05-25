@@ -25,20 +25,29 @@ st.set_page_config(
 )
 # =========================================================
 # CUSTOM CSS 
+# =========================================================
 st.markdown("""
 <style>
-/* 1. Nền tổng thể: Thiết lập màu nền và hình sóng uốn lượn dưới cùng */
+/* 1. Thiết lập chung cho nền trang */
 .stApp {
     background-color: #f4f6f9;
-    /* Hiệu ứng sóng uốn lượn cố định bằng SVG */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23319151' fill-opacity='0.1' d='M0,192L48,176C96,160,192,128,288,133.3C384,139,480,181,576,197.3C672,213,768,203,864,170.7C960,139,1056,85,1152,80C1248,75,1344,117,1392,138.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: bottom;
-    background-size: 100% auto;
 }
 
-/* 2. Đặt nội dung nổi lên trên nền sóng */
+/* 2. Lớp sóng uốn lượn cố định (Wave Container) */
+.wave-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23319151' fill-opacity='0.15' d='M0,192L48,176C96,160,192,128,288,133.3C384,139,480,181,576,197.3C672,213,768,203,864,170.7C960,139,1056,85,1152,80C1248,75,1344,117,1392,138.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+/* 3. Container nội dung chính */
 .block-container {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 30px;
@@ -48,7 +57,7 @@ st.markdown("""
     position: relative;
 }
 
-/* 3. Header thiết kế chuyên nghiệp */
+/* 4. Header chuyên nghiệp */
 .header-box {
     background: #319151;
     padding: 40px;
@@ -58,18 +67,10 @@ st.markdown("""
     color: white;
     box-shadow: 0px 10px 20px rgba(49, 145, 81, 0.3);
 }
-.header-title {
-    font-size: 50px;
-    font-weight: 900;
-    margin-bottom: 10px;
-    color: white;
-}
-.header-sub {
-    font-size: 18px;
-    color: rgba(255,255,255,0.9);
-}
+.header-title { font-size: 50px; font-weight: 900; margin-bottom: 10px; color: white; }
+.header-sub { font-size: 18px; color: rgba(255,255,255,0.9); }
 
-/* 4. Nút bấm bo tròn (Pill style) */
+/* 5. Nút bấm bo tròn */
 .stButton > button {
     width: 100%;
     height: 65px;
@@ -81,12 +82,9 @@ st.markdown("""
     border: none;
     transition: all 0.3s ease;
 }
-.stButton > button:hover {
-    filter: brightness(1.2);
-    transform: translateY(-2px);
-}
+.stButton > button:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
-/* 5. Khung kết quả và khuyến nghị */
+/* 6. Khung kết quả */
 .result-box, .recommend-box {
     background-color: white;
     padding: 25px;
@@ -95,16 +93,14 @@ st.markdown("""
     border: 1px solid #e1e1e1;
     margin-bottom: 20px;
 }
-
-/* 6. Căn chỉnh tiêu đề trong nội dung */
 h2 { color: #319151 !important; }
 
-/* 7. Đảm bảo các thành phần mặc định Streamlit hiển thị đúng */
-[data-testid="stMetricValue"] {
-    color: #319151;
-}
+/* 7. Metric */
+[data-testid="stMetricValue"] { color: #319151; }
 </style>
 """, unsafe_allow_html=True)
+
+# Dòng này là bắt buộc để lớp sóng xuất hiện
 st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 # =========================================================
 # HEADER
