@@ -17,28 +17,49 @@ except:
     model = None
 
 # =========================================================
-# CSS HOÀN CHỈNH (Đã thêm lại wave-container)
+
+# CSS TỐI ƯU
 # =========================================================
 st.markdown("""
 <style>
+    /* 1. Sóng nước trải dài full trang */
     .wave-container {
         position: fixed; bottom: 0; left: 0; width: 100%; height: 120px;
-        z-index: 0; pointer-events: none; opacity: 0.5;
+        z-index: 0; pointer-events: none; opacity: 0.4;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23FFCC00' d='M0,192L48,176C96,160,192,128,288,133.3C384,139,480,181,576,197.3C672,213,768,203,864,170.7C960,139,1056,85,1152,80C1248,75,1344,117,1392,138.7L1440,160L1440,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
-        background-repeat: repeat-x; background-size: 1440px 100%; background-position: bottom;
+        background-repeat: repeat-x; 
+        background-size: 100% 120px; 
+        background-position: bottom;
     }
-    .header-box { background: #007353; padding: 10px; border-radius: 10px; color: white; text-align: center; margin-bottom: 20px; z-index: 1; position: relative; }
-    div[data-testid="column"] { background: rgba(255, 255, 255, 0.95); padding: 20px !important; border-radius: 15px; border: 1px solid #eee; z-index: 1; position: relative; }
-    .small-text { font-size: 14px !important; }
+    
+    /* 2. Header to và đẹp hơn */
+    .header-box { 
+        background: #007353; padding: 25px; border-radius: 20px; 
+        color: white; text-align: center; margin-bottom: 30px; 
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+    .header-title { font-size: 32px; font-weight: 800; margin: 0; }
+    
+    /* 3. Container nội dung */
+    div[data-testid="column"] { 
+        background: rgba(255, 255, 255, 0.95); 
+        padding: 25px !important; border-radius: 20px; 
+        border: 1px solid #ddd; z-index: 1; position: relative;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 
 # =========================================================
-# UI
+# UI HEADER
 # =========================================================
-st.markdown('<div class="header-box"><h5>🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ (BIDV)</h5></div>', unsafe_allow_html=True)
+st.markdown("""
+<div class="header-box">
+    <div class="header-title">🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</div>
+    <div style="font-size: 16px; opacity: 0.9;">Ứng dụng Mô hình Cây quyết định trong Quản trị Rủi ro Ngân hàng BIDV</div>
+</div>
+""", unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns([1, 1, 1.2])
 
