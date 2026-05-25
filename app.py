@@ -14,7 +14,7 @@ st.set_page_config(
 # =========================================================
 # LOAD MODEL (Đã bỏ hoàn toàn Scaler)
 # =========================================================
-model = joblib.load("bidv_churn_model.pkl")
+model = joblib.load("bidv_churn_model.pkl1")
 
 # =========================================================
 # CUSTOM CSS
