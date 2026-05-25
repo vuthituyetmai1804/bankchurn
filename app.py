@@ -7,10 +7,8 @@ st.set_page_config(page_title="BIDV Churn Predict", page_icon="🔍", layout="wi
 st.markdown("""
 <style>
     .main {padding: 2rem;}
-    .stButton>button {
-        width: 100%; height: 3.8rem; font-size: 1.3rem; font-weight: bold;
-        background: linear-gradient(90deg, #FF4B4B, #FF6B6B); color: white;
-    }
+    .stButton>button {width: 100%; height: 3.8rem; font-size: 1.3rem; font-weight: bold;
+        background: linear-gradient(90deg, #FF4B4B, #FF6B6B); color: white;}
     .metric {font-size: 2.5rem !important;}
 </style>
 """, unsafe_allow_html=True)
@@ -27,7 +25,7 @@ def load_model():
         st.sidebar.success("✅ Model loaded")
         return model, scaler
     except Exception as e:
-        st.error(f"❌ Lỗi load model: {e}")
+        st.error(f"❌ Lỗi load: {e}")
         return None, None
 
 model, scaler = load_model()
@@ -38,7 +36,6 @@ if model is None:
 st.header("📋 Nhập Thông Tin Khách Hàng")
 
 col1, col2 = st.columns(2)
-
 with col1:
     age = st.slider("**Tuổi**", 18, 100, 45)
     credit_score = st.slider("**Điểm tín dụng**", 300, 850, 700)
@@ -53,7 +50,7 @@ with col2:
 st.subheader("Thông tin bổ sung")
 col3, col4 = st.columns(2)
 with col3:
-    engagement_score = st.slider("Điểm tương tác (0-100)", 0, 100, 65)
+    engagement_score = st.slider("Điểm tương tác", 0, 100, 65)
     nums_card = st.slider("Số thẻ tín dụng", 1, 5, 2)
 with col4:
     nums_service = st.slider("Số dịch vụ đang dùng", 1, 6, 3)
@@ -61,11 +58,12 @@ with col4:
 # ==================== DỰ ĐOÁN ====================
 if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
     try:
+        # Tạo đúng 21 cột theo model (dùng one-hot mặc định)
         input_data = {
             'credit_sco': [credit_score],
             'gender': ['male'],
             'age': [age],
-            'occupation': ['Nhân viên văn phòng/Công chức'],
+            'occupation': ['Nhân viên văn phòng/Công chức'],   # giữ string nếu model dùng string
             'balance': [balance],
             'monthly_ir': [monthly_income],
             'address': ['TP. Hồ Chí Minh'],
@@ -87,30 +85,24 @@ if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
         
         input_df = pd.DataFrame(input_data)
         
-        # Scale đúng 9 cột
         cols_to_scale = ['credit_sco', 'age', 'balance', 'monthly_ir', 'nums_card', 
                         'nums_service', 'engagement_score', 'tenure_ye', 'risk_score']
         
         input_scaled = input_df.copy()
         input_scaled[cols_to_scale] = scaler.transform(input_scaled[cols_to_scale])
         
-        # Dự đoán
         proba = model.predict_proba(input_scaled)[0][1]
         risk_score = proba * 100
         
-        # Hiển thị kết quả
         st.success("**DỰ ĐOÁN HOÀN TẤT**")
         col_res1, col_res2 = st.columns([1, 2])
         with col_res1:
             st.metric("**RISK SCORE**", f"{risk_score:.1f}%")
         
         with col_res2:
-            if risk_score < 30:
-                level = "🟢 LOW RISK"
-            elif risk_score <= 70:
-                level = "🟡 MEDIUM RISK"
-            else:
-                level = "🔴 HIGH RISK"
+            if risk_score < 30: level = "🟢 LOW RISK"
+            elif risk_score <= 70: level = "🟡 MEDIUM RISK"
+            else: level = "🔴 HIGH RISK"
             st.markdown(f"### {level}")
         
         if risk_score >= 50:
@@ -122,7 +114,7 @@ if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
         if risk_score >= 70:
             st.error("🚨 Liên hệ khẩn cấp trong 24h")
         elif risk_score >= 40:
-            st.warning("⚠️ Nên chăm sóc chủ động")
+            st.warning("⚠️ Chăm sóc chủ động")
         else:
             st.success("✅ Duy trì mối quan hệ tốt")
 
