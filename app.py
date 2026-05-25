@@ -224,5 +224,4 @@ if predict_btn:
 
         recommendation = "🚨 Cần liên hệ khẩn cấp trong 24h để giữ chân khách hàng."
 
-        color = "red
-)
+        color = "red"
