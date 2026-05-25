@@ -201,19 +201,26 @@ if predict_btn:
     input_scaled_df = pd.DataFrame(scaled_array, columns=scaler_features)
 
     # =====================================================
+    # =====================================================
     # 3. GHÉP THÊM CÁC CỘT KHÔNG SCALE VÀO ĐỂ RA ĐẦU VÀO CHO MODEL
     # =====================================================
     input_scaled_df['tenure_ye'] = tenure_ye
     input_scaled_df['active_member'] = active_member
 
-    # Tự động lấy danh sách và thứ tự cột mà MODEL yêu cầu khi train
+    # KIỂM TRA CHÍNH XÁC THỨ TỰ TỪ MODEL TRƯỚC KHI DỰ ĐOÁN
     if hasattr(model, 'feature_names_in_'):
-        model_features = model.feature_names_in_
+        model_features = list(model.feature_names_in_)
+        # Ép dữ liệu theo ĐÚNG và CHÍNH XÁC thứ tự cột mô hình yêu cầu lúc train
         final_input = input_scaled_df[model_features]
     else:
-        # Nếu model không lưu thuộc tính tên, mặc định gộp đủ 9 cột theo thứ tự hợp lý
-        model_features = scaler_features + ['tenure_ye', 'active_member']
-        final_input = input_scaled_df[model_features]
+        # Nếu model không lưu thuộc tính (ví dụ một số bản sklearn cũ), 
+        # Bạn phải xếp tay đúng với thứ tự mảng X_train lúc bạn chạy file `.fit()`
+        # Thử đảo vị trí các cột ở dưới đây nếu kết quả vẫn bị đứng im:
+        mẹo_thứ_tự_thủ_công = [
+            'credit_sco', 'age', 'balance', 'monthly_ir', 
+            'nums_card', 'nums_service', 'engagement_score', 'tenure_ye', 'active_member'
+        ]
+        final_input = input_scaled_df[mẹo_thứ_tự_thủ_công]
 
     # =====================================================
     # 4. DỰ ĐOÁN XÁC SUẤT (PREDICT PROBABILITY)
