@@ -1,11 +1,10 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import joblib
 
-# =========================
-# PAGE CONFIG
-# =========================
+# =========================================================
+# CONFIG
+# =========================================================
 
 st.set_page_config(
     page_title="BIDV Churn Prediction",
@@ -13,82 +12,43 @@ st.set_page_config(
     layout="wide"
 )
 
-# =========================
+# =========================================================
 # LOAD MODEL
-# =========================
+# =========================================================
 
-model = joblib.load("bidv_churnn_model.pkl")
+model = joblib.load("bidv_churn_model.pkl")
 scaler = joblib.load("scaler_bidv_model.pkl")
 
-# =========================
-# CUSTOM CSS
-# =========================
+# =========================================================
+# TITLE
+# =========================================================
 
 st.markdown("""
-<style>
-
-.main {
-    background-color: #f5f7fa;
-}
-
-.block-container {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-}
-
-h1 {
-    color: #005BAC;
-    text-align: center;
-    font-weight: bold;
-}
-
-.stButton > button {
-    width: 100%;
-    height: 60px;
-    border-radius: 12px;
-    border: none;
-    background-color: #005BAC;
-    color: white;
-    font-size: 22px;
-    font-weight: bold;
-}
-
-.stButton > button:hover {
-    background-color: #003f7d;
-    color: white;
-}
-
-.metric-card {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0px 2px 10px rgba(0,0,0,0.1);
-}
-
-</style>
+<h1 style='text-align: center; color: #0B5ED7;'>
+🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ
+</h1>
 """, unsafe_allow_html=True)
 
-# =========================
-# TITLE
-# =========================
+st.markdown("""
+<p style='text-align: center; font-size:18px; color:gray;'>
+Ứng dụng AI hỗ trợ phát hiện khách hàng có nguy cơ rời bỏ dịch vụ ngân hàng
+</p>
+""", unsafe_allow_html=True)
 
-st.title("🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ")
+st.divider()
 
-st.markdown("---")
-
-# =========================
+# =========================================================
 # INPUT FORM
-# =========================
+# =========================================================
 
 col1, col2 = st.columns(2)
 
-# LEFT COLUMN
 with col1:
 
     age = st.slider(
         "🎂 Tuổi",
         18,
-        90,
+        80,
         35
     )
 
@@ -107,243 +67,187 @@ with col1:
     )
 
     monthly_income = st.number_input(
-        "📈 Thu nhập hàng tháng (VND)",
+        "💵 Thu nhập hàng tháng (VND)",
         min_value=0,
         value=15000000,
         step=1000000
     )
 
-# RIGHT COLUMN
 with col2:
 
     tenure = st.slider(
-        "⏳ Số năm gắn bó",
+        "📆 Số năm gắn bó",
         0,
-        4,
-        2
+        10,
+        3
     )
 
-    active_member = st.radio(
+    active_member_text = st.radio(
         "📱 Hoạt động gần đây",
         ["Có", "Không"]
     )
 
-    loyalty_level = st.selectbox(
+    loyalty = st.selectbox(
         "🏅 Hạng khách hàng",
         ["Bronze", "Silver", "Gold"]
     )
 
+# =========================================================
+# ENCODE INPUT
+# =========================================================
+
+active_member = 1 if active_member_text == "Có" else 0
+
+loyalty_map = {
+    "Bronze": 1,
+    "Silver": 2,
+    "Gold": 3
+}
+
+loyalty_level = loyalty_map[loyalty]
+
+# =========================================================
+# PREDICT BUTTON
+# =========================================================
+
 st.markdown("")
 
-# =========================
-# BUTTON
-# =========================
+predict_btn = st.button(
+    "🔍 DỰ ĐOÁN NGAY",
+    use_container_width=True,
+    type="primary"
+)
 
-predict_btn = st.button("🔍 DỰ ĐOÁN NGAY")
-
-# =========================
-# PREDICT
-# =========================
+# =========================================================
+# PREDICTION
+# =========================================================
 
 if predict_btn:
 
-    # =========================
-    # ALL FEATURES
-    # =========================
+    # Tạo dataframe đúng thứ tự feature
+    input_data = pd.DataFrame({
+        'credit_sco': [credit_score],
+        'age': [age],
+        'balance': [balance],
+        'monthly_ir': [monthly_income],
+        'tenure_ye': [tenure],
+        'active_member': [active_member],
+        'loyalty_level': [loyalty_level]
+    })
 
-    all_columns = [
-        'credit_sco',
-        'gender',
-        'age',
-        'balance',
-        'monthly_ir',
-        'tenure_ye',
-        'married',
-        'nums_card',
-        'nums_service',
-        'active_member',
-        'last_transaction_month',
-        'customer_segment',
-        'engagement_score',
-        'loyalty_level',
-        'risk_score',
-        'risk_segment',
-        'cluster_group',
-        'occupation_Giáo viên/Giảng viên',
-        'occupation_Hưu trí',
-        'occupation_Kinh doanh/Bán hàng',
-        'occupation_Kế toán/Tài chính',
-        'occupation_Kỹ sư/Chuyên viên IT',
-        'occupation_Lao động phổ thông',
-        'occupation_Nhân viên văn phòng/Công chức',
-        'occupation_Nội trợ/Sinh viên',
-        'occupation_Quản lý/Lãnh đạo',
-        'origin_province_Bình Dương',
-        'origin_province_Cần Thơ',
-        'origin_province_Hà Nội',
-        'origin_province_Long An',
-        'origin_province_TP. Hồ Chí Minh',
-        'origin_province_Tiền Giang',
-        'origin_province_Tỉnh khác',
-        'origin_province_Đồng Nai',
-        'digital_behavior_offline'
-    ]
-
-    # =========================
-    # CREATE DATAFRAME
-    # =========================
-
-    input_data = pd.DataFrame(
-        np.zeros((1, len(all_columns))),
-        columns=all_columns
-    )
-
-    # =========================
-    # USER INPUT
-    # =========================
-
-    input_data['credit_sco'] = credit_score
-    input_data['age'] = age
-    input_data['balance'] = balance
-    input_data['monthly_ir'] = monthly_income
-    input_data['tenure_ye'] = tenure
-
-    input_data['active_member'] = 1 if active_member == "Có" else 0
-
-    # =========================
-    # DEFAULT VALUES
-    # =========================
-
-    input_data['gender'] = 1
-    input_data['married'] = 1
-    input_data['nums_card'] = 2
-    input_data['nums_service'] = 2
-    input_data['last_transaction_month'] = 1000000
-    input_data['customer_segment'] = 1
-    input_data['engagement_score'] = 50
-    input_data['risk_score'] = 0.2
-    input_data['risk_segment'] = 1
-    input_data['cluster_group'] = 2
-
-    # =========================
-    # LOYALTY LEVEL
-    # =========================
-
-    if loyalty_level == "Bronze":
-        input_data['loyalty_level'] = 0
-
-    elif loyalty_level == "Silver":
-        input_data['loyalty_level'] = 1
-
-    else:
-        input_data['loyalty_level'] = 2
-
-    # =========================
-    # DEFAULT OCCUPATION
-    # =========================
-
-    input_data['occupation_Nhân viên văn phòng/Công chức'] = 1
-
-    # =========================
-    # DEFAULT PROVINCE
-    # =========================
-
-    input_data['origin_province_Hà Nội'] = 1
-
-    # =========================
-    # SCALE
-    # =========================
-
+    # Scale đúng các cột số
     cols_to_scale = [
         'credit_sco',
         'age',
         'balance',
         'monthly_ir',
-        'nums_card',
-        'nums_service',
-        'engagement_score',
-        'tenure_ye',
-        'risk_score'
+        'tenure_ye'
     ]
 
     input_data[cols_to_scale] = scaler.transform(
         input_data[cols_to_scale]
     )
 
-    # =========================
-    # PREDICT
-    # =========================
-
+    # Predict probability
     probability = model.predict_proba(input_data)[0][1]
 
     risk_percent = round(probability * 100, 2)
 
-    # =========================
-    # OUTPUT
-    # =========================
+    st.divider()
 
-    st.markdown("---")
-
+    # =====================================================
     # RISK SCORE
+    # =====================================================
+
+    st.subheader("📊 RISK SCORE")
+
     st.metric(
-        label="🎯 RISK SCORE",
+        label="Nguy cơ rời bỏ",
         value=f"{risk_percent}%"
     )
 
-    # =========================
+    # =====================================================
     # RISK LEVEL
-    # =========================
+    # =====================================================
+
+    st.subheader("🚦 Risk Level")
 
     if risk_percent < 30:
-
         st.success("🟢 LOW RISK")
 
     elif risk_percent < 70:
-
         st.warning("🟡 MEDIUM RISK")
 
     else:
-
         st.error("🔴 HIGH RISK")
 
-    # =========================
+    # =====================================================
     # PREDICTION
-    # =========================
+    # =====================================================
+
+    st.subheader("🤖 Prediction")
 
     if risk_percent >= 50:
-
         st.error(
-            "⚠️ Khách hàng có nguy cơ rời bỏ"
+            "⚠️ Khách hàng có nguy cơ rời bỏ dịch vụ."
         )
-
     else:
-
         st.success(
-            "✅ Khách hàng có khả năng tiếp tục sử dụng dịch vụ"
+            "✅ Khách hàng có khả năng tiếp tục sử dụng dịch vụ."
         )
 
-    # =========================
+    # =====================================================
     # RECOMMENDATION
-    # =========================
+    # =====================================================
 
-    st.subheader("📌 Recommendation")
+    st.subheader("💡 Recommendation")
 
     if risk_percent >= 70:
 
-        st.error(
-            "🚨 Cần liên hệ khẩn cấp trong 24h để giữ chân khách hàng."
-        )
+        st.error("""
+🚨 Cần liên hệ khách hàng trong vòng 24h.
+
+Đề xuất:
+- Chăm sóc ưu tiên
+- Tặng voucher
+- Ưu đãi lãi suất
+- RM gọi điện trực tiếp
+""")
 
     elif risk_percent >= 40:
 
-        st.warning(
-            "📞 Nên chăm sóc chủ động: Gọi điện tư vấn, ưu đãi lãi suất, voucher."
-        )
+        st.warning("""
+📞 Nên chăm sóc chủ động.
+
+Đề xuất:
+- Gọi điện tư vấn
+- Gửi ưu đãi cá nhân hóa
+- Khuyến khích sử dụng thêm dịch vụ
+""")
 
     else:
 
-        st.success(
-            "✅ Duy trì mối quan hệ tốt và tiếp tục chăm sóc định kỳ."
-        )
+        st.success("""
+✅ Duy trì mối quan hệ tốt với khách hàng.
 
-  
+Đề xuất:
+- Chăm sóc định kỳ
+- Giới thiệu sản phẩm mới
+- Tăng loyalty
+""")
+
+    # =====================================================
+    # FEATURE IMPORTANCE
+    # =====================================================
+
+    st.subheader("📌 Các yếu tố ảnh hưởng")
+
+    importance_df = pd.DataFrame({
+        "Feature": input_data.columns,
+        "Value": input_data.iloc[0].values
+    })
+
+    st.dataframe(
+        importance_df,
+        use_container_width=True
+    )
