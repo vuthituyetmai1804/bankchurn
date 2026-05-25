@@ -72,10 +72,17 @@ st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 # =========================================================
 # UI HEADER
 # =========================================================
+col_logo_l, col_logo_m, col_logo_r = st.columns([1, 2, 1])
+with col_logo_m:
+    st.image("https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg", width=300)
+
+# Tiêu đề và dòng mô tả
 st.markdown("""
-<div class="header-box">
-    <div class="header-title">🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</div>
-    <div style="font-size: 16px;font-style: italic; opacity: 0.9;"> Giải pháp dự báo hành vi, hỗ trợ chiến lược chăm sóc khách hàng chủ động tại BIDV</div>
+<div style="text-align: center; margin-bottom: 30px;">
+    <h2 style="color: #007353; font-weight: 800; margin-bottom: 5px;">🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</h2>
+    <p style="font-size: 17px; color: #555; font-style: italic; font-weight: 300;">
+        Giải pháp phân tích hành vi khách hàng, hỗ trợ chiến lược giữ chân chủ động tại BIDV
+    </p>
 </div>
 """, unsafe_allow_html=True)
 
