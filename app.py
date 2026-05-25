@@ -246,12 +246,6 @@ if predict_btn:
             value=risk_level
         )
 
-    with colC:
-        st.metric(
-            label="PREDICTION",
-            value="CHURN" if risk_percent >= 50 else "STAY"
-        )
-
     # =====================================================
     # PROGRESS BAR
     # =====================================================
