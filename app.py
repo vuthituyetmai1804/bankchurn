@@ -468,7 +468,7 @@ with left:
     fig = go.Figure(go.Indicator(
         mode = "gauge+number",
 
-        value = risk_percent,
+        value = risk_percentage,
 
         number = {
             'suffix': "%",
