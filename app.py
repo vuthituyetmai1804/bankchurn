@@ -3,7 +3,7 @@ import pandas as pd
 import joblib
 
 # =========================================================
-# CONFIG
+# CONFIG & LOAD MODEL
 # =========================================================
 st.set_page_config(page_title="BIDV Churn Prediction", page_icon="🏦", layout="wide")
 
@@ -21,34 +21,19 @@ except Exception:
 # =========================================================
 st.markdown("""
 <style>
-    /* Cố định Sóng ở dưới cùng, trải dài toàn màn hình */
     .wave-container {
-        position: fixed;
-        bottom: 0; left: 0;
-        width: 100%; height: 150px;
+        position: fixed; bottom: 0; left: 0; width: 100%; height: 150px;
         z-index: 0; pointer-events: none;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23FFCC00' fill-opacity='0.4' d='M0,192L48,176C96,160,192,128,288,133.3C384,139,480,181,576,197.3C672,213,768,203,864,170.7C960,139,1056,85,1152,80C1248,75,1344,117,1392,138.7L1440,160L1440,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
-        background-repeat: repeat-x;
-        background-position: bottom;
+        background-repeat: repeat-x; background-position: bottom;
     }
-    
-    /* Header nhỏ gọn */
-    .header-box { 
-        background: #007353; padding: 15px; border-radius: 10px; 
-        color: white; text-align: center; margin-bottom: 20px; 
-    }
-    
-    /* Định dạng cột để chứa nội dung trên nền sóng */
-    div[data-testid="column"] { 
-        background: rgba(255, 255, 255, 0.9); 
-        padding: 20px !important; 
-        border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
+    .header-box { background: #007353; padding: 15px; border-radius: 10px; color: white; text-align: center; margin-bottom: 20px; }
+    div[data-testid="column"] { background: rgba(255, 255, 255, 0.9); padding: 20px !important; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .result-box { background-color: white; padding: 20px; border-radius: 15px; border: 1px solid #e1e1e1; margin-bottom: 15px; }
+    .recommend-box { background-color: white; padding: 20px; border-radius: 15px; box-shadow: 0px 0px 15px rgba(0,0,0,0.08); }
 </style>
 """, unsafe_allow_html=True)
 
-# Hiển thị sóng
 st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 
 # =========================================================
@@ -77,17 +62,36 @@ with col3:
     st.subheader("🎯 Kết quả dự báo")
     if predict_btn and model:
         active_member = 1 if active_text == "Có" else 0
-        input_data = pd.DataFrame([{'monthly_ir': monthly_ir, 'credit_sco': credit_sco, 'nums_service': nums_service, 
-                                    'engagement_score': engagement_score, 'balance': balance, 'age': age, 'active_member': active_member}])
+        features_order = ['monthly_ir', 'credit_sco', 'nums_service', 'engagement_score', 'balance', 'age', 'active_member']
+        input_df = pd.DataFrame([{'monthly_ir': monthly_ir, 'credit_sco': credit_sco, 'nums_service': nums_service, 
+                                  'engagement_score': engagement_score, 'balance': balance, 'age': age, 'active_member': active_member}])
         
-        risk_score = model.predict_proba(input_data)[0][1]
+        # LOGIC TỪ YÊU CẦU CỦA BẠN
+        risk_score = model.predict_proba(input_df[features_order])[0][1]
         risk_percent = round(risk_score * 100, 2)
+
+        if risk_percent < 30:
+            risk_level, prediction_text, recommendation, color = "🟢 LOW RISK", "✅ Khách hàng ổn định", "✅ Duy trì mối quan hệ tốt và tiếp tục chăm sóc định kỳ.", "green"
+        elif risk_percent <= 70:
+            risk_level, prediction_text, recommendation, color = "🟡 MEDIUM RISK", "⚠️ Khách hàng có nguy cơ rời bỏ", "📞 Nên chăm sóc chủ động: Gọi điện tư vấn, tặng ưu đãi lãi suất, voucher.", "orange"
+        else:
+            risk_level, prediction_text, recommendation, color = "🔴 HIGH RISK", "⚠️ Khách hàng có nguy cơ rời bỏ", "🚨 Cần liên hệ khẩn cấp trong 24h để giữ chân khách hàng.", "red"
+
+        # HIỂN THỊ METRICS
+        cA, cB = st.columns(2)
+        cA.metric("RISK SCORE", f"{risk_percent}%")
+        cB.metric("RISK LEVEL", risk_level)
         
-        color = "green" if risk_percent < 30 else ("orange" if risk_percent <= 70 else "red")
-        
-        st.metric("Tỷ lệ rủi ro", f"{risk_percent}%")
         st.progress(int(risk_percent))
-        st.markdown(f"**Trạng thái:** <span style='color:{color}; font-weight:bold;'>{'Rủi ro CAO' if risk_percent > 70 else ('Trung bình' if risk_percent > 30 else 'Thấp')}</span>", unsafe_allow_html=True)
+        
+        # BOX KẾT QUẢ
+        st.markdown(f'<div class="result-box"><h4 style="color:{color}; text-align: center;">{prediction_text}</h4></div>', unsafe_allow_html=True)
+        
+        # BOX KHUYẾN NGHỊ
+        st.markdown(f"""<div class="recommend-box" style="border-left: 8px solid {color};">
+        <h4 style="margin: 0;">🎯 Khuyến nghị hành động:</h4>
+        <p style="margin: 5px 0 0 0;">{recommendation}</p></div>""", unsafe_allow_html=True)
+        
     elif predict_btn and not model:
         st.error("Lỗi: Không tìm thấy model!")
     else:
