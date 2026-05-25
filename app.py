@@ -2,6 +2,12 @@ import streamlit as st
 import pandas as pd
 import joblib
 
+# =====================================================
+# LOAD
+# =====================================================
+model = joblib.load("bidv_churn_model.pkl")
+
+scaler = joblib.load("scaler_bidv.pkl")import streamlit as st
 # =========================================================
 # PAGE CONFIG
 # =========================================================
@@ -11,11 +17,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# =========================================================
-# LOAD MODEL
-# =========================================================
-model = joblib.load("bidv_churn_model.pkl")
-model = joblib.load("scaler_bidv_model.pkl")
 # =========================================================
 # CUSTOM CSS
 # =========================================================
