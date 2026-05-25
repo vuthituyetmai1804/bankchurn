@@ -48,7 +48,7 @@ st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 st.markdown("""
 <div class="header-box">
     <div class="header-title">🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</div>
-    <div style="font-size: 16px; opacity: 0.9;"> Quản trị Rủi ro Ngân hàng BIDV @ 2026</div>
+    <div style="font-size: 16px; opacity: 0.9;"> Giải pháp dự báo hành vi, hỗ trợ chiến lược chăm sóc khách hàng chủ động tại BIDV.</div>
 </div>
 """, unsafe_allow_html=True)
 
