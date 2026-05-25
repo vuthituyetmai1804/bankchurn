@@ -22,7 +22,27 @@ except:
 # =========================================================
 st.markdown("""
 <style>
+    /* 1. Tạo hiệu ứng gradient đổi màu cho toàn bộ nền */
+    .stApp {
+        background: linear-gradient(135deg, #f0f7f4, #fff8e1, #ffffff);
+        background-size: 400% 400%;
+        animation: gradientAnimation 15s ease infinite;
+    }
+
+    /* 2. Định nghĩa hiệu ứng chuyển động */
+    @keyframes gradientAnimation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
     
+    /* 3. Đảm bảo các khối nội dung nổi bật trên nền động */
+    div[data-testid="column"] {
+        background: rgba(255, 255, 255, 0.7); /* Nền hơi trong suốt để nhìn thấy gradient phía sau */
+        backdrop-filter: blur(10px);          /* Hiệu ứng mờ đục chuyên nghiệp */
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+    }
     /* 1. Header to và đẹp hơn */
     .header-box { 
         background: #007353; padding: 25px; border-radius: 20px; 
