@@ -86,7 +86,7 @@ st.markdown("""
         🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ
     </div>
     <div class="header-sub">
-        AI-Powered Bank Customer Churn Prediction (No-Scaler Version)
+        Ứng dụng Mô hình Cây quyết định trong Quản trị Rủi ro Ngân hàng BIDV
     </div>
 </div>
 """, unsafe_allow_html=True)
