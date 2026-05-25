@@ -71,10 +71,13 @@ st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 
 # HEADER VỚI LOGO (CĂN GIỮA TUYỆT ĐỐI)
 # =========================================================
+# Tăng tỷ lệ cột bên trái và phải (ví dụ: 1:1:1)
+col_logo_l, col_logo_m, col_logo_r = st.columns([1, 1, 1]) 
+
+with col_logo_m:
+    # Tăng width để logo to hơn như bạn muốn
+    st.image("https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg", width=500)
 st.markdown("""
-<div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg" width="300">
-</div>
 <div style="text-align: center; margin-bottom: 30px;">
     <h2 style="color: #007353; font-weight: 800; margin-bottom: 5px;">🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ</h2>
     <p style="font-size: 17px; color: #555; font-style: italic; font-weight: 300;">
