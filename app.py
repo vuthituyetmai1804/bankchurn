@@ -15,7 +15,6 @@ st.set_page_config(
 # LOAD MODEL & SCALER
 # =========================================================
 model = joblib.load("bidv_churn_model.pkl")
-scaler = joblib.load("scaler_bidv_model.pkl")
 
 # =========================================================
 # CUSTOM CSS
