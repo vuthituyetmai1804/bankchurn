@@ -73,7 +73,7 @@ st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True)
 # =========================================================
 st.markdown("""
 <div style="display: flex; justify-content: center;">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg" width="500">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f4/Logo_Bidv_m%E1%BB%9Bi.svg" width="100">
 </div>
 """, unsafe_allow_html=True)
 
