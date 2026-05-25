@@ -27,77 +27,81 @@ st.set_page_config(
 # CUSTOM CSS 
 st.markdown("""
 <style>
-/* 1. Thiết lập chung cho nền trang */
-.stApp { background-color: #f4f6f9; }
+    /* 1. Đổi font chữ toàn trang và nền */
+    @import url('https://googleapis.com');
+    
+    html, body, [data-testid="stAppViewContainer"] {
+        font-family: 'Inter', sans-serif;
+        background-color: #F8F9FA;
+    }
 
-/* 2. Lớp sóng uốn lượn cố định (Wave Container) - Màu Vàng hoa mai #FFCC00 */
-.wave-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 200px;
-    z-index: 0;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23FFCC00' fill-opacity='0.4' d='M0,192L48,176C96,160,192,128,288,133.3C384,139,480,181,576,197.3C672,213,768,203,864,170.7C960,139,1056,85,1152,80C1248,75,1344,117,1392,138.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
-    background-size: cover;
-    background-repeat: no-repeat;
-}
+    /* 2. Làm mới Thanh Banner Đầu Trang (Header) */
+    .stMarkdown div[data-testid="stMarkdownContainer"] h1 {
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+    
+    /* 3. Thiết kế lại các Khối Nhập Liệu (Cards) */
+    [data-testid="stVerticalBlock"] > div[style*="flex-direction: column"] {
+        background: #ffffff;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        border: 1px solid #EAEAEA;
+        margin-bottom: 20px;
+    }
 
-/* 3. Container nội dung chính */
-.block-container {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 30px;
-    padding: 3rem !important;
-    box-shadow: 0px 10px 30px rgba(0,0,0,0.1);
-    z-index: 1;
-    position: relative;
-}
+    /* 4. Thay đổi màu Đỏ của Slider sang Xanh Ngọc Lục Bảo sang trọng */
+    div[data-baseweb="slider"] [role="slider"] {
+        background-color: #006A4E !important; /* Xanh BIDV */
+        border: 2px solid #ffffff;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    div[data-baseweb="slider"] [aria-valuenow] {
+        background-color: #006A4E !important;
+    }
+    /* Thanh ray của slider */
+    div[data-baseweb="slider"] > div > div {
+        background: linear-gradient(to right, #006A4E 0%, #006A4E var(--progress), #EAEAEA var(--progress), #EAEAEA 100%) !important;
+    }
 
-/* 4. Header chuyên nghiệp - Màu Xanh ngọc lục bảo #007353 */
-.header-box {
-    background: #007353;
-    padding: 40px;
-    border-radius: 30px;
-    text-align: center;
-    margin-bottom: 30px;
-    color: white;
-    box-shadow: 0px 10px 20px rgba(0, 115, 83, 0.3);
-}
-.header-title { font-size: 50px; font-weight: 900; margin-bottom: 10px; color: white; }
-.header-sub { font-size: 18px; color: rgba(255,255,255,0.9); }
+    /* 5. Nâng cấp các ô Nhập Số (Input Number) */
+    div[data-baseweb="input"] {
+        border-radius: 10px !important;
+        border: 1px solid #DCE1E6 !important;
+        background-color: #FAFAFA !important;
+        transition: all 0.3s ease;
+    }
+    div[data-baseweb="input"]:focus-within {
+        border-color: #006A4E !important;
+        box-shadow: 0 0 0 3px rgba(0, 106, 78, 0.15) !important;
+    }
 
-/* 5. Nút bấm bo tròn - Màu Xanh ngọc lục bảo #007353 */
-.stButton > button {
-    width: 100%;
-    height: 65px;
-    background-color: #007353 !important;
-    color: white !important;
-    font-size: 24px;
-    font-weight: bold;
-    border-radius: 50px !important;
-    border: none;
-    transition: all 0.3s ease;
-}
-.stButton > button:hover { filter: brightness(1.2); transform: translateY(-2px); }
+    /* 6. Nút Dự Đoán Đẳng Cấp */
+    div.stButton > button {
+        background: linear-gradient(135deg, #006A4E 0%, #004D38 100%) !important;
+        color: white !important;
+        border-radius: 12px !important;
+        padding: 14px 32px !important;
+        font-weight: 600 !important;
+        border: none !important;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 15px rgba(0, 106, 78, 0.3) !important;
+        transition: all 0.3s ease !important;
+        width: 100%;
+    }
+    div.stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 106, 78, 0.4) !important;
+    }
 
-/* 6. Khung kết quả */
-.result-box, .recommend-box {
-    background-color: white;
-    padding: 25px;
-    border-radius: 25px !important;
-    box-shadow: 0px 8px 20px rgba(0,0,0,0.08);
-    border: 1px solid #e1e1e1;
-    margin-bottom: 20px;
-}
-h2 { color: #007353 !important; }
-
-/* 7. Metric */
-[data-testid="stMetricValue"] { color: #007353; }
+    /* 7. Tinh chỉnh khu vực Radio Button */
+    div[data-testid="stRadio"] label {
+        font-size: 15px;
+        color: #4A4A4A;
+    }
 </style>
 """, unsafe_allow_html=True)
-
-st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True) 
 # =========================================================
 # HEADER
 # =========================================================
