@@ -306,3 +306,15 @@ if predict_btn:
     <p>{recommendation}</p>
     </div>
     """, unsafe_allow_html=True)
+    if predict_btn:
+    # ------------------ ĐOẠN CODE KIỂM TRA ------------------
+    st.write("### 🧪 THÔNG TIN KIỂM TRA LỖI MODEL:")
+    
+    # 1. Kiểm tra xem dữ liệu sau khi scale trông như thế nào
+    test_features = ['credit_sco', 'age', 'balance', 'monthly_ir', 'nums_card', 'nums_service', 'engagement_score']
+    df_test = pd.DataFrame([[credit_sco, age, balance, monthly_ir, nums_card, nums_service, engagement_score]], columns=test_features)
+    df_test_scaled = scaler.transform(df_test)
+    
+    st.write("Dự liệu THÔ bạn vừa nhập:", df_test.values)
+    st.write("Dữ liệu SAU KHI SCALE (Phải là các số nhỏ quanh mức -3 đến 3):", df_test_scaled)
+    # --------------------------------------------------------
