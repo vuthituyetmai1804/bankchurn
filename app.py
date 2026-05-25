@@ -607,7 +607,7 @@ if predict_btn:
     # RIGHT PANEL
     # =====================================================
     
-with right_panel:
+        with right_panel:
 
     if risk_percent < 30:
         risk_name = "🟢 RỦI RO THẤP"
