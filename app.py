@@ -74,21 +74,21 @@ with col3:
         risk_score = model.predict_proba(input_data)[0][1]
         risk_percent = round(risk_score * 100, 2)
         
-         if risk_percent < 30:
-        risk_level = "🟢 LOW RISK"
-        prediction_text = "✅ Khách hàng có khả năng tiếp tục sử dụng dịch vụ"
-        recommendation = "✅ Duy trì mối quan hệ tốt và tiếp tục chăm sóc định kỳ."
-        color = "green"
-    elif risk_percent <= 70:
-        risk_level = "🟡 MEDIUM RISK"
-        prediction_text = "⚠️ Khách hàng có nguy cơ rời bỏ"
-        recommendation = "📞 Nên chăm sóc chủ động: Gọi điện tư vấn, tặng ưu đãi lãi suất, voucher."
-        color = "orange"
-    else:
-        risk_level = "🔴 HIGH RISK"
-        prediction_text = "⚠️ Khách hàng có nguy cơ rời bỏ"
-        recommendation = "🚨 Cần liên hệ khẩn cấp trong 24h để giữ chân khách hàng."
-        color = "red"
+             if risk_percent < 30:
+            risk_level = "🟢 LOW RISK"
+            prediction_text = "✅ Khách hàng có khả năng tiếp tục sử dụng dịch vụ"
+            recommendation = "✅ Duy trì mối quan hệ tốt và tiếp tục chăm sóc định kỳ."
+            color = "green"
+        elif risk_percent <= 70:
+            risk_level = "🟡 MEDIUM RISK"
+            prediction_text = "⚠️ Khách hàng có nguy cơ rời bỏ"
+            recommendation = "📞 Nên chăm sóc chủ động: Gọi điện tư vấn, tặng ưu đãi lãi suất, voucher."
+            color = "orange"
+        else:
+            risk_level = "🔴 HIGH RISK"
+            prediction_text = "⚠️ Khách hàng có nguy cơ rời bỏ"
+            recommendation = "🚨 Cần liên hệ khẩn cấp trong 24h để giữ chân khách hàng."
+            color = "red"
 
         # Hiển thị nhỏ gọn
         c1, c2 = st.columns(2)
