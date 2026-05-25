@@ -1,6 +1,0 @@
-[theme]
-primaryColor = "#004B87"          # Màu xanh đại dương thương hiệu
-backgroundColor = "#FFFFFF"      # Nền trắng tinh khiết, không dùng màu xám xịt nữa
-secondaryBackgroundColor = "#F4F7FA" # Màu nền của các ô nhập liệu và thanh trượt
-textColor = "#1E293B"            # Màu chữ xám đen thẫm cực sang
-font = "sans serif"
