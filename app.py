@@ -30,7 +30,7 @@ st.markdown("""
 /* 1. Thiết lập chung cho nền trang */
 .stApp { background-color: #f4f6f9; }
 
-/* 2. Lớp sóng uốn lượn (Wave Container) */
+/* 2. Lớp sóng uốn lượn cố định (Wave Container) - Màu Vàng hoa mai #FFCC00 */
 .wave-container {
     position: fixed;
     bottom: 0;
@@ -54,56 +54,20 @@ st.markdown("""
     position: relative;
 }
 
-/* 4. Header chuyên nghiệp - Kích thước lớn */
+/* 4. Header chuyên nghiệp - Màu Xanh ngọc lục bảo #007353 */
 .header-box {
     background: #007353;
-    padding: 50px 40px;
+    padding: 40px;
     border-radius: 30px;
     text-align: center;
     margin-bottom: 30px;
     color: white;
     box-shadow: 0px 10px 20px rgba(0, 115, 83, 0.3);
 }
-.header-title { 
-    font-size: 55px !important; 
-    font-weight: 900 !important; 
-    margin-bottom: 15px !important; 
-    color: white !important;
-    text-transform: uppercase;
-    line-height: 1.1 !important;
-}
-.header-sub { 
-    font-size: 22px !important; 
-    color: rgba(255,255,255,0.95) !important;
-    font-weight: 400 !important;
-}
+.header-title { font-size: 50px; font-weight: 900; margin-bottom: 10px; color: white; }
+.header-sub { font-size: 18px; color: rgba(255,255,255,0.9); }
 
-/* 5. Cấu hình màu sắc Xám đậm cho Slider */
-.stSlider [data-baseweb="slider"] [data-testid="stThumb"] {
-    background-color: #4f4f4f !important;
-    border: 2px solid #4f4f4f !important;
-}
-.stSlider [data-baseweb="slider"] [role="slider"] {
-    background-color: #4f4f4f !important;
-}
-.stSlider [data-baseweb="slider"] > div > div > div > div {
-    background: #4f4f4f !important;
-}
-
-/* 6. Làm đẹp ô nhập liệu (Number Input) */
-.stNumberInput input {
-    border: 2px solid #e1e1e1 !important;
-    border-radius: 12px !important;
-    padding: 12px 15px !important;
-    background-color: #ffffff !important;
-    transition: all 0.3s ease;
-}
-.stNumberInput input:focus {
-    border-color: #007353 !important;
-    box-shadow: 0 0 5px rgba(0, 115, 83, 0.2);
-}
-
-/* 7. Nút bấm bo tròn */
+/* 5. Nút bấm bo tròn - Màu Xanh ngọc lục bảo #007353 */
 .stButton > button {
     width: 100%;
     height: 65px;
@@ -117,7 +81,7 @@ st.markdown("""
 }
 .stButton > button:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
-/* 8. Khung kết quả */
+/* 6. Khung kết quả */
 .result-box, .recommend-box {
     background-color: white;
     padding: 25px;
@@ -128,9 +92,10 @@ st.markdown("""
 }
 h2 { color: #007353 !important; }
 
-/* 9. Metric */
-[data-testid="stMetricValue"] { color: #007353; font-size: 40px !important; }
+/* 7. Metric */
+[data-testid="stMetricValue"] { color: #007353; }
 </style>
+""", unsafe_allow_html=True)
 
 st.markdown('<div class="wave-container"></div>', unsafe_allow_html=True) 
 # =========================================================
