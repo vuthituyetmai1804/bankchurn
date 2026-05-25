@@ -1,5 +1,3 @@
-bash
-cat > /mnt/user-data/outputs/app.py << 'PYEOF'
 import streamlit as st
 import pandas as pd
 import joblib
@@ -437,5 +435,3 @@ with col_result:
           </div>
         </div>
         """, unsafe_allow_html=True)
-PYEOF
-echo "done"
