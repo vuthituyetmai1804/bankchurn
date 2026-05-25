@@ -27,7 +27,7 @@ BACKGROUND
 ========================= */
 
 .stApp {
-    background: linear-gradient(135deg, #e8fff3, #dffbf2, #f4fffb);
+    background: linear-gradient(135deg, #eef8f7, #f5fffd);
     font-family: 'Poppins', sans-serif;
 }
 
@@ -48,7 +48,7 @@ HEADER
 .header-box {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, #00b978, #00d084);
+    background: linear-gradient(135deg, #006B68, #008B87);
     padding: 45px;
     border-radius: 30px;
     margin-bottom: 35px;
@@ -65,7 +65,7 @@ HEADER
     left: -50%;
     bottom: -120px;
 
-    background: rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.12);
 
     border-radius: 45%;
 
@@ -159,7 +159,7 @@ BUTTON
     border: none;
     border-radius: 18px;
 
-    background: linear-gradient(135deg, #00b978, #00d084);
+    background: linear-gradient(135deg, #006B68, #009E99);
 
     color: white;
     font-size: 24px;
@@ -295,6 +295,7 @@ FLOATING BLUR CIRCLES
 # =========================================================
 st.markdown("""
 <div class="header-box">
+
     <div class="header-title">
         🏦 HỆ THỐNG DỰ ĐOÁN KHÁCH HÀNG RỜI BỎ
     </div>
@@ -302,6 +303,7 @@ st.markdown("""
     <div class="header-sub">
         AI Banking Analytics • BIDV Churn Prediction 2026
     </div>
+
 </div>
 """, unsafe_allow_html=True)
 
