@@ -34,7 +34,7 @@ model, scaler = load_model()
 if model is None:
     st.stop()
 
-# ==================== INPUT FORM (THEO YÊU CẦU CỦA BẠN) ====================
+# ==================== INPUT FORM ====================
 st.header("📋 Nhập Thông Tin Khách Hàng")
 
 col1, col2 = st.columns(2)
@@ -65,8 +65,11 @@ if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
             'credit_sco': [credit_score],
             'gender': ['male'],
             'age': [age],
+            'occupation': ['Nhân viên văn phòng/Công chức'],
             'balance': [balance],
             'monthly_ir': [monthly_income],
+            'address': ['TP. Hồ Chí Minh'],
+            'origin_province': ['TP. Hồ Chí Minh'],
             'tenure_ye': [tenure],
             'married': [1],
             'nums_card': [nums_card],
@@ -76,47 +79,24 @@ if st.button("🔍 DỰ ĐOÁN NGAY", type="primary"):
             'customer_segment': ['Mass'],
             'engagement_score': [engagement_score],
             'loyalty_level': [loyalty_level],
+            'digital_behavior': ['mobile'],
             'risk_score': [0.15],
             'risk_segment': ['Low'],
-            'cluster_group': [4],
-            'recency_days': [30],
-            'tenure_days': [tenure * 365],
-            
-            # One-hot columns
-            'digital_behavior_offline': [0],
-            'origin_province_TP. Hồ Chí Minh': [1],
-            'origin_province_Hà Nội': [0],
-            'origin_province_Đồng Nai': [0],
-            'origin_province_Bình Dương': [0],
-            'origin_province_Cần Thơ': [0],
-            'origin_province_Long An': [0],
-            'origin_province_Tiền Giang': [0],
-            'origin_province_Tỉnh khác': [0],
-            'occupation_Nhân viên văn phòng/Công chức': [1],
-            'occupation_Kinh doanh/Bán hàng': [0],
-            'occupation_Kỹ sư/Chuyên viên IT': [0],
-            'occupation_Giáo viên/Giảng viên': [0],
-            'occupation_Hưu trí': [0],
-            'occupation_Kế toán/Tài chính': [0],
-            'occupation_Lao động phổ thông': [0],
-            'occupation_Nội trợ/Sinh viên': [0],
-            'occupation_Quản lý/Lãnh đạo': [0],
+            'cluster_group': [4]
         }
         
         input_df = pd.DataFrame(input_data)
         
-        # Scale đúng 9 cột
         cols_to_scale = ['credit_sco', 'age', 'balance', 'monthly_ir', 'nums_card', 
                         'nums_service', 'engagement_score', 'tenure_ye', 'risk_score']
         
         input_scaled = input_df.copy()
         input_scaled[cols_to_scale] = scaler.transform(input_scaled[cols_to_scale])
         
-        # Dự đoán
         proba = model.predict_proba(input_scaled)[0][1]
         risk_score = round(proba * 100, 1)
         
-        # Hiển thị theo đúng yêu cầu
+        # Hiển thị theo yêu cầu
         st.success("**DỰ ĐOÁN HOÀN TẤT**")
         
         col_res1, col_res2 = st.columns([1, 2])
