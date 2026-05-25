@@ -7,7 +7,7 @@ import joblib
 # =====================================================
 model = joblib.load("bidv_churn_model.pkl")
 
-scaler = joblib.load("scaler_bidv.pkl")import streamlit as st
+scaler = joblib.load("scaler_bidv_model.pkl")import streamlit as st
 # =========================================================
 # PAGE CONFIG
 # =========================================================
