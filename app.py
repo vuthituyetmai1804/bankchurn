@@ -26,15 +26,12 @@ st.set_page_config(
 # =========================================================
 # CUSTOM CSS 
 # =========================================================
-# =========================================================
-# CSS & WAVE EFFECT
-# =========================================================
 st.markdown("""
 <style>
 /* 1. Thiết lập chung cho nền trang */
 .stApp { background-color: #f4f6f9; }
 
-/* 2. Lớp các sợi (Lines Container) - Màu Vàng hoa mai #FFCC00 */
+/* 2. Lớp sợi sóng uốn lượn - Màu Vàng hoa mai #FFCC00 */
 .wave-container {
     position: fixed;
     bottom: 0;
@@ -43,12 +40,13 @@ st.markdown("""
     height: 150px;
     z-index: 0;
     pointer-events: none;
-    /* Sử dụng SVG dạng đường kẻ song song */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cdefs%3E%3Cpattern id='lines' width='40' height='40' patternUnits='userSpaceOnUse' patternTransform='rotate(45)'%3E%3Cline x1='0' y1='0' x2='0' y2='40' stroke='%23FFCC00' stroke-width='2' stroke-opacity='0.3'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23lines)'/%3E%3C/svg%3E");
-    background-repeat: repeat-x;
+    /* SVG tạo hiệu ứng các sợi sóng uốn lượn */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='none' stroke='%23FFCC00' stroke-width='2' stroke-opacity='0.4' d='M0,192C120,160 240,128 360,133.3C480,139 600,181 720,197.3C840,213 960,203 1080,170.7C1200,139 1320,85 1440,80'/%3E%3Cpath fill='none' stroke='%23FFCC00' stroke-width='2' stroke-opacity='0.2' d='M0,250C120,220 240,190 360,195C480,200 600,240 720,255C840,270 960,260 1080,230C1200,200 1320,150 1440,140'/%3E%3C/svg%3E");
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
-/* 3. Container nội dung chính */
+/* 3. Giữ nguyên định dạng container nội dung của bạn */
 .block-container {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 30px;
@@ -58,7 +56,7 @@ st.markdown("""
     position: relative;
 }
 
-/* 4. Header chuyên nghiệp - Màu Xanh ngọc lục bảo #007353 */
+/* 4. Header giữ nguyên cấu hình */
 .header-box {
     background: #007353;
     padding: 40px;
@@ -68,8 +66,10 @@ st.markdown("""
     color: white;
     box-shadow: 0px 10px 20px rgba(0, 115, 83, 0.3);
 }
+.header-title { font-size: 50px; font-weight: 900; margin-bottom: 10px; color: white; }
+.header-sub { font-size: 18px; color: rgba(255,255,255,0.9); }
 
-/* 5. Nút bấm bo tròn - Màu Xanh ngọc lục bảo #007353 */
+/* 5. Nút bấm giữ nguyên cấu hình (Xanh ngọc lục bảo) */
 .stButton > button {
     width: 100%;
     height: 65px;
@@ -83,7 +83,7 @@ st.markdown("""
 }
 .stButton > button:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
-/* 6. Khung kết quả */
+/* 6. Khung kết quả giữ nguyên */
 .result-box, .recommend-box {
     background-color: white;
     padding: 25px;
@@ -94,7 +94,7 @@ st.markdown("""
 }
 h2 { color: #007353 !important; }
 
-/* 7. Metric */
+/* 7. Metric giữ nguyên */
 [data-testid="stMetricValue"] { color: #007353; }
 </style>
 """, unsafe_allow_html=True)
